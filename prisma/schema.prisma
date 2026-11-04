@@ -1,0 +1,212 @@
+// Prisma schema for The Daily Signal News Platform
+// Compatible with SQLite for local dev and PostgreSQL for production
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  role          String    @default("REPORTER") // SUPER_ADMIN, EDITOR, REPORTER, VIDEO_JOURNALIST, CONTRIBUTOR
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  reporters     Reporter[]
+}
+
+model Reporter {
+  id          String      @id @default(uuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name        String
+  slug        String      @unique
+  title       String
+  beat        String
+  bio         String
+  avatarUrl   String
+  email       String
+  twitter     String?
+  linkedin    String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  articles    Article[]
+  videos      Video[]
+  liveBlogs   LiveBlog[]
+}
+
+model Category {
+  id          String      @id @default(uuid())
+  name        String
+  slug        String      @unique
+  description String?
+  color       String?
+  orderIndex  Int         @default(0)
+  showInNav   Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  articles    Article[]
+  liveBlogs   LiveBlog[]
+}
+
+model Tag {
+  id        String       @id @default(uuid())
+  name      String
+  slug      String       @unique
+  articles  ArticleTag[]
+}
+
+model Article {
+  id                 String       @id @default(uuid())
+  title              String
+  slug               String       @unique
+  deck               String
+  body               String
+  featuredImage      String
+  imageCaption       String?
+  imageCredit        String?
+  categoryId         String
+  category           Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  reporterId         String
+  reporter           Reporter     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  status             String       @default("DRAFT") // DRAFT, IN_REVIEW, APPROVED, SCHEDULED, PUBLISHED, ARCHIVED
+  articleType        String       @default("NEWS") // NEWS, ANALYSIS, OPINION, INVESTIGATION, EXPLAINER, GROUND_REPORT
+  isBreaking         Boolean      @default(false)
+  isLead             Boolean      @default(false)
+  isFeatured         Boolean      @default(false)
+  isOpinion          Boolean      @default(false)
+  isSponsored        Boolean      @default(false)
+  readingTimeMinutes Int          @default(4)
+  district           String?
+  sourceAttribution  String?
+  correctionNotice   String?
+  scheduledAt        DateTime?
+  publishedAt        DateTime?
+  updatedAt          DateTime?
+  createdAt          DateTime     @default(now())
+  viewsCount         Int          @default(0)
+  tags               ArticleTag[]
+  comments           Comment[]
+
+  @@index([status])
+  @@index([publishedAt])
+  @@index([categoryId])
+  @@index([reporterId])
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+}
+
+model Video {
+  id           String    @id @default(uuid())
+  title        String
+  slug         String    @unique
+  summary      String
+  videoUrl     String
+  thumbnailUrl String
+  duration     String
+  category     String
+  reporterId   String?
+  reporter     Reporter? @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  isFeatured   Boolean   @default(false)
+  publishedAt  DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+}
+
+model PhotoStory {
+  id            String           @id @default(uuid())
+  title         String
+  slug          String           @unique
+  summary       String
+  featuredImage String
+  photographer  String
+  publishedAt   DateTime         @default(now())
+  createdAt     DateTime         @default(now())
+  items         PhotoStoryItem[]
+}
+
+model PhotoStoryItem {
+  id           String     @id @default(uuid())
+  photoStoryId String
+  photoStory   PhotoStory @relation(fields: [photoStoryId], references: [id], onDelete: Cascade)
+  imageUrl     String
+  caption      String
+  credit       String?
+  orderIndex   Int        @default(0)
+}
+
+model LiveBlog {
+  id          String       @id @default(uuid())
+  title       String
+  slug        String       @unique
+  summary     String
+  status      String       @default("ACTIVE") // ACTIVE, CONCLUDED, PAUSED
+  reporterId  String?
+  reporter    Reporter?    @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  categoryId  String?
+  category    Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  startedAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+  updates     LiveUpdate[]
+}
+
+model LiveUpdate {
+  id         String   @id @default(uuid())
+  liveBlogId String
+  liveBlog   LiveBlog @relation(fields: [liveBlogId], references: [id], onDelete: Cascade)
+  title      String
+  content    String
+  imageUrl   String?
+  authorName String
+  isKeyEvent Boolean  @default(false)
+  timestamp  DateTime @default(now())
+  createdAt  DateTime @default(now())
+}
+
+model MediaAsset {
+  id        String   @id @default(uuid())
+  filename  String
+  url       String
+  altText   String
+  caption   String?
+  credit    String?
+  fileType  String
+  fileSize  Int
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  editionPreference String   @default("India")
+  isActive          Boolean  @default(true)
+  subscribedAt      DateTime @default(now())
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  articleId   String
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  authorName  String
+  authorEmail String
+  content     String
+  status      String   @default("APPROVED")
+  createdAt   DateTime @default(now())
+}
+
+model EditorialSetting {
+  key   String @id
+  value String
+}

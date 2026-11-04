@@ -1,0 +1,458 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
+:root,
+html.light,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* NEWSIGHT Professional Light Mode Palette */
+  --background: #FFFFFF;
+  --foreground: #174A7E;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F7FAFE;
+  --bg-sidebar: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-hover: #F0F7FD;
+  --surface: #FFFFFF;
+  --surface-secondary: #F7FAFE;
+  --sidebar-bg: #FFFFFF;
+  --header-bg: #FFFFFF;
+  --footer-bg: #FFFFFF;
+  --hover-bg: #F0F7FD;
+  --text-primary: #294767;
+  --text-secondary: #607991;
+  --text-muted: #71869C;
+  --border: #DCE7F2;
+  --border-color: #DCE7F2;
+  --accent: #D71920;
+  --accent-red: #D71920;
+  --accent-blue: #079FE3;
+  --navigation-active: #E5F2FC;
+  --navigation-active-text: #087FC1;
+  --input-background: #FFFFFF;
+  --input-border: #DCE7F2;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --dropdown-bg: #FFFFFF;
+  --modal-bg: #FFFFFF;
+  --article-text: #294767;
+  --article-heading: #174A7E;
+  --article-quote-bg: #F7FAFE;
+  --scrollbar-track: #FFFFFF;
+  --scrollbar-thumb: #DCE7F2;
+  --scrollbar-thumb-hover: #71869C;
+  --logo-text: #174A7E;
+
+  /* Admin Premium Blue-and-White Palette */
+  --admin-bg: #FFFFFF;
+  --admin-secondary-bg: #F7FAFE;
+  --admin-sidebar-bg: #FFFFFF;
+  --admin-card: #FFFFFF;
+  --admin-surface-hover: #F0F7FD;
+  --admin-text-primary: #174A7E;
+  --admin-text-secondary: #294767;
+  --admin-text-muted: #71869C;
+  --admin-border: #DCE7F2;
+  --admin-sidebar-border: #E2EAF2;
+  --admin-primary: #079FE3;
+  --admin-deep-blue: #1261A6;
+  --admin-navy: #174A7E;
+  --admin-light-blue: #E5F2FC;
+  --admin-active-bg: #E5F2FC;
+  --admin-active-text: #087FC1;
+}
+
+html.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* NEWSIGHT Dark Mode Palette (Preserved exactly) */
+  --background: #080B11;
+  --foreground: #F5F7FA;
+  --bg-primary: #080B11;
+  --bg-secondary: #0E131C;
+  --bg-sidebar: #0A0E15;
+  --bg-card: #121925;
+  --bg-hover: #1B2432;
+  --surface: #121925;
+  --surface-secondary: #0E131C;
+  --sidebar-bg: #0A0E15;
+  --header-bg: #080B11;
+  --footer-bg: #0A0E15;
+  --hover-bg: #1B2432;
+  --text-primary: #F5F7FA;
+  --text-secondary: #A4ADBB;
+  --text-muted: #707B8B;
+  --border: #252D39;
+  --border-color: #252D39;
+  --accent: #E50914;
+  --accent-red: #E50914;
+  --accent-blue: #075DEB;
+  --navigation-active: #075DEB;
+  --navigation-active-text: #FFFFFF;
+  --input-background: #121925;
+  --input-border: #252D39;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --dropdown-bg: #0E131C;
+  --modal-bg: #080B11;
+  --article-text: #D6DCE5;
+  --article-heading: #F5F7FA;
+  --article-quote-bg: #121925;
+  --scrollbar-track: #080B11;
+  --scrollbar-thumb: #252D39;
+  --scrollbar-thumb-hover: #364152;
+  --logo-text: #FFFFFF;
+
+  /* Admin Dark Mode Palette */
+  --admin-bg: #0B1220;
+  --admin-sidebar-bg: #0D1626;
+  --admin-card: #131F32;
+  --admin-surface-hover: #1A2942;
+  --admin-text-primary: #F4F7FB;
+  --admin-text-secondary: #B6C3D4;
+  --admin-text-muted: #7890A8;
+  --admin-border: #27364B;
+  --admin-sidebar-border: #27364B;
+  --admin-primary: #079FE3;
+  --admin-deep-blue: #079FE3;
+  --admin-navy: #F4F7FB;
+  --admin-light-blue: #1A2942;
+  --admin-active-bg: #1A2942;
+  --admin-active-text: #079FE3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-newsight-bg: var(--background);
+  --color-newsight-secondary: var(--surface-secondary);
+  --color-newsight-sidebar: var(--sidebar-bg);
+  --color-newsight-card: var(--surface);
+  --color-newsight-hover: var(--hover-bg);
+  --color-newsight-text: var(--text-primary);
+  --color-newsight-secondary-text: var(--text-secondary);
+  --color-newsight-muted: var(--text-muted);
+  --color-newsight-border: var(--border);
+  --color-newsight-red: var(--accent);
+  --color-newsight-blue: var(--accent-blue);
+  --color-admin-bg: var(--admin-bg);
+  --color-admin-sidebar-bg: var(--admin-sidebar-bg);
+  --color-admin-card: var(--admin-card);
+  --color-admin-hover: var(--admin-surface-hover);
+  --color-admin-text: var(--admin-text-primary);
+  --color-admin-secondary-text: var(--admin-text-secondary);
+  --color-admin-muted: var(--admin-text-muted);
+  --color-admin-border: var(--admin-border);
+  --color-admin-primary: var(--admin-primary);
+  --color-admin-active-bg: var(--admin-active-bg);
+  --color-admin-active-text: var(--admin-active-text);
+  --font-serif: var(--font-serif), Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle, smooth transition applied momentarily when user toggles themes */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, fill 180ms ease, stroke 180ms ease !important;
+  transition-delay: 0s !important;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: none !important;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Editorial Typography */
+.font-headline {
+  letter-spacing: -0.015em;
+}
+
+.headline-lead {
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.headline-card {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.editorial-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Video line-clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Article Prose Typography */
+.article-prose {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.85;
+  color: var(--article-text);
+}
+
+.article-prose h2 {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--article-heading);
+  letter-spacing: -0.015em;
+}
+
+.article-prose h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--article-heading);
+}
+
+.article-prose p {
+  margin-bottom: 1.4rem;
+}
+
+.article-prose blockquote {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1.6;
+  border-left: 3px solid var(--accent);
+  background-color: var(--article-quote-bg);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  color: var(--article-heading);
+  border-radius: 0 4px 4px 0;
+}
+
+.article-prose ul {
+  list-style-type: square;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-prose li {
+  margin-bottom: 0.5rem;
+}
+
+/* Reading Progress Bar */
+#reading-progress {
+  transition: width 100ms ease-out;
+}
+
+/* ==========================================================================
+   GLOBAL LIGHT THEME MAPPINGS
+   Ensures complete site consistency for components using Tailwind palette tokens
+   ========================================================================== */
+
+html.light body {
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+/* Background mappings */
+html.light .bg-\[\#080B11\] {
+  background-color: var(--background);
+}
+html.light .bg-\[\#0A0E15\] {
+  background-color: var(--sidebar-bg);
+}
+html.light header.bg-\[\#080B11\],
+html.light header.bg-\[\#0A0E15\] {
+  background-color: var(--header-bg);
+}
+html.light footer.bg-\[\#0A0E15\] {
+  background-color: var(--footer-bg);
+}
+html.light .bg-\[\#0A0E15\]\/95 {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+html.light .bg-\[\#121925\],
+html.light .bg-\[\#121925\]\/70,
+html.light .bg-\[\#121925\]\/80,
+html.light .bg-\[\#121925\]\/60,
+html.light .bg-\[\#121925\]\/50,
+html.light .bg-\[\#121925\]\/40 {
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+html.light .bg-\[\#0E131C\] {
+  background-color: var(--surface-secondary);
+}
+html.light .bg-\[\#1B2432\] {
+  background-color: var(--hover-bg);
+}
+
+/* Form input backgrounds */
+html.light input.bg-\[\#121925\],
+html.light textarea.bg-\[\#121925\],
+html.light select.bg-\[\#121925\] {
+  background-color: var(--input-background);
+  box-shadow: none;
+}
+
+/* Interactive Hovers */
+html.light .hover\:bg-\[\#1B2432\]:hover {
+  background-color: var(--hover-bg);
+}
+html.light .hover\:bg-\[\#121925\]:hover {
+  background-color: var(--surface-secondary);
+}
+
+/* Text Colors */
+html.light .text-\[\#F5F7FA\] {
+  color: var(--text-primary);
+}
+html.light .text-\[\#A4ADBB\] {
+  color: var(--text-secondary);
+}
+html.light .text-\[\#707B8B\] {
+  color: var(--text-muted);
+}
+html.light .text-\[\#D6DCE5\] {
+  color: var(--text-primary);
+}
+html.light .placeholder-\[\#707B8B\]::placeholder {
+  color: var(--text-muted);
+}
+
+/* Headings and card headlines */
+html.light h1.text-white,
+html.light h2.text-white,
+html.light h3.text-white,
+html.light h4.text-white,
+html.light h5.text-white,
+html.light h6.text-white {
+  color: var(--text-primary);
+}
+html.light .group:hover .group-hover\:text-white {
+  color: var(--text-primary);
+}
+html.light a:not(.bg-\[\#075DEB\]):not(.bg-\[\#E50914\]):not([class*="bg-red"]):hover.hover\:text-white,
+html.light button:not(.bg-\[\#075DEB\]):not(.bg-\[\#E50914\]):not([class*="bg-red"]):hover.hover\:text-white {
+  color: var(--text-primary);
+}
+
+/* Borders and Dividers */
+html.light .border-\[\#252D39\],
+html.light .border-\[\#252D39\]\/40,
+html.light .border-\[\#252D39\]\/50,
+html.light .border-\[\#252D39\]\/60 {
+  border-color: var(--border);
+}
+html.light .divide-\[\#252D39\] > :not([hidden]) ~ :not([hidden]),
+html.light .divide-\[\#252D39\]\/50 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border);
+}
+
+/* Primary Left Sidebar: Active Navigation Item (Light Mode Requirement) */
+html.light aside a.bg-\[\#075DEB\] {
+  background-color: var(--navigation-active);
+  color: var(--navigation-active-text) !important;
+  box-shadow: none !important;
+}
+html.light aside a.bg-\[\#075DEB\] span {
+  color: var(--navigation-active-text) !important;
+}
+html.light aside a.bg-\[\#075DEB\] svg {
+  color: var(--navigation-active-text) !important;
+}
+
+/* Mobile Bottom Navigation Bar in Light Mode */
+html.light nav.bg-\[\#0A0E15\]\/95 {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Popover & Dropdown shadows in Light Mode */
+html.light [class*="shadow-2xl"] {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+/* Keep video player itself, thumbnail images and media authentic */
+video,
+iframe,
+img {
+  filter: none !important;
+}
+
+/* Navbar Header Theme Styles */
+html.dark header.fixed,
+html.dark header.sticky {
+  background: #080B11 !important;
+  border-bottom-color: #252D39 !important;
+}
+
+html.light header.fixed,
+html.light header.sticky {
+  background: #FFFFFF !important;
+  border-bottom-color: #E5E7EB !important;
+}
