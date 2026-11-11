@@ -10,10 +10,15 @@ import CategoryView from '@/components/public/CategoryView';
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.map((cat) => ({
-    slug: cat.slug,
-  }));
+  try {
+    const categories = await getCategories();
+    return categories.map((cat) => ({
+      slug: cat.slug,
+    }));
+  } catch (err) {
+    console.warn('generateStaticParams error in category/[slug]:', err);
+    return [];
+  }
 }
 
 interface CategoryPageProps {

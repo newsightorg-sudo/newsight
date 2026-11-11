@@ -15,10 +15,15 @@ import {
 } from 'lucide-react';
 
 export async function generateStaticParams() {
-  const videos = await getVideos(50);
-  return videos.map((v) => ({
-    slug: v.slug,
-  }));
+  try {
+    const videos = await getVideos(50);
+    return videos.map((v) => ({
+      slug: v.slug,
+    }));
+  } catch (err) {
+    console.warn('generateStaticParams error in video/[slug]:', err);
+    return [];
+  }
 }
 
 interface VideoPageProps {

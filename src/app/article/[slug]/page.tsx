@@ -20,10 +20,15 @@ import {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const articles = await getLatestArticles(50);
-  return articles.map((a) => ({
-    slug: a.slug,
-  }));
+  try {
+    const articles = await getLatestArticles(50);
+    return articles.map((a) => ({
+      slug: a.slug,
+    }));
+  } catch (err) {
+    console.warn('generateStaticParams error in article/[slug]:', err);
+    return [];
+  }
 }
 
 interface ArticlePageProps {

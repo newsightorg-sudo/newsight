@@ -16,10 +16,15 @@ import {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const reporters = await getReporters();
-  return reporters.map((r) => ({
-    slug: r.slug,
-  }));
+  try {
+    const reporters = await getReporters();
+    return reporters.map((r) => ({
+      slug: r.slug,
+    }));
+  } catch (err) {
+    console.warn('generateStaticParams error in reporters/[slug]:', err);
+    return [];
+  }
 }
 
 interface ReporterPageProps {

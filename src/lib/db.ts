@@ -52,17 +52,34 @@ function getDatabaseUrl(): string {
     const envPath = path.join(process.cwd(), '.env.local');
     if (fs.existsSync(envPath)) {
       const content = fs.readFileSync(envPath, 'utf8');
-      const match = content.match(/DATABASE_URL="([^"]+)"/);
+      const match = content.match(/DATABASE_URL=["']?([^"'\r\n]+)["']?/);
       if (match) return match[1];
     }
   } catch (_) {}
 
-  throw new Error('DATABASE_URL is not defined in environment variables or .env.local');
+  return '';
 }
 
 export function getDb(): NeonDbClient {
   if (!globalForDb.__neon_db) {
     const dbUrl = getDatabaseUrl();
+    if (!dbUrl) {
+      console.warn('[DB] Warning: DATABASE_URL is not defined in environment variables. Database operations will return empty results.');
+      return {
+        prepare(_sqlQuery: string): DbStatement {
+          return {
+            async all<T = any>(): Promise<T[]> { return []; },
+            async get<T = any>(): Promise<T | null> { return null; },
+            async run(): Promise<{ changes: number }> { return { changes: 0 }; }
+          };
+        },
+        async exec(): Promise<any> { return []; },
+        async query<T = any>(): Promise<T[]> { return []; },
+        async queryOne<T = any>(): Promise<T | null> { return null; },
+        async execute(): Promise<{ changes: number }> { return { changes: 0 }; }
+      };
+    }
+
     const client = neon(dbUrl);
 
     globalForDb.__neon_db = {
@@ -110,4 +127,11 @@ export function getDb(): NeonDbClient {
   return globalForDb.__neon_db;
 }
 
-export const db = getDb();
+// Lazy proxy so that importing `db` does not trigger database connection or env checks at module load time
+export const db: NeonDbClient = new Proxy({} as NeonDbClient, {
+  get(_target, prop: string | symbol) {
+    const client = getDb();
+    const value = (client as any)[prop];
+    return typeof value === 'function' ? value.bind(client) : value;
+  }
+});

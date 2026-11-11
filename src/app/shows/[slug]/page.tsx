@@ -16,10 +16,15 @@ import { formatDate } from '@/lib/utils';
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const shows = await getShows();
-  return shows.map((show) => ({
-    slug: show.slug,
-  }));
+  try {
+    const shows = await getShows();
+    return shows.map((show) => ({
+      slug: show.slug,
+    }));
+  } catch (err) {
+    console.warn('generateStaticParams error in shows/[slug]:', err);
+    return [];
+  }
 }
 
 interface ShowPageProps {
