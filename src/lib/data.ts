@@ -135,29 +135,69 @@ export async function updateEditorialSettings(settings: Partial<Record<string, s
 }
 
 // 2. Categories
+export const DEFAULT_CATEGORIES: Category[] = [
+  { id: 'cat-1', name: 'Top Stories', slug: 'top-stories', description: 'Real-time coverage and breaking developments.', color: '#E50914', order_index: 1, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-news', name: 'News', slug: 'news', description: 'National and global headlines.', color: '#075DEB', order_index: 2, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-politics', name: 'Politics', slug: 'politics', description: 'Parliamentary coverage, elections, and public policy.', color: '#079FE3', order_index: 3, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-india', name: 'India', slug: 'india', description: 'Comprehensive reporting from across India.', color: '#F59E0B', order_index: 4, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-world', name: 'World', slug: 'world', description: 'Geopolitics, diplomacy, and global affairs.', color: '#8B5CF6', order_index: 5, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-kerala', name: 'Kerala', slug: 'kerala', description: 'Regional investigations and state affairs from Kerala.', color: '#10B981', order_index: 6, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-business', name: 'Business', slug: 'business', description: 'Financial markets, macroeconomic analysis, and corporate filings.', color: '#14B8A6', order_index: 7, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-tech', name: 'Technology', slug: 'technology', description: 'Semiconductors, AI architecture, and tech policy.', color: '#6366F1', order_index: 8, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-sports', name: 'Sports', slug: 'sports', description: 'Tournaments, athletics, and sports reporting.', color: '#EF4444', order_index: 9, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-science', name: 'Science', slug: 'science', description: 'Space exploration, astrophysics, and climate telemetry.', color: '#06B6D4', order_index: 10, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-environment', name: 'Environment', slug: 'environment', description: 'Ecological investigations and climate policy.', color: '#22C55E', order_index: 11, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-investigations', name: 'Investigations', slug: 'investigations', description: 'In-depth investigative reports.', color: '#EC4899', order_index: 12, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-opinion', name: 'Opinion', slug: 'opinion', description: 'Editorial commentary and expert perspectives.', color: '#A855F7', order_index: 13, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-entertainment', name: 'Entertainment', slug: 'entertainment', description: 'Cinema, arts, and cultural commentary.', color: '#F43F5E', order_index: 14, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-lifestyle', name: 'Lifestyle', slug: 'lifestyle', description: 'Culture, society, and modern life.', color: '#84CC16', order_index: 15, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-travel', name: 'Travel', slug: 'travel', description: 'Expeditions and field reporting.', color: '#0EA5E9', order_index: 16, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-elections', name: 'Elections', slug: 'elections', description: 'Democracy in action and electoral data.', color: '#F97316', order_index: 17, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-special-reports', name: 'Special Reports', slug: 'special-reports', description: 'Special visual dispatches and series.', color: '#E11D48', order_index: 18, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' }
+];
+
 export const getCategories = cache(async (showInNavOnly = false): Promise<Category[]> => {
   const cacheKey = `categories_${showInNavOnly}`;
   const cached = getFromCache<Category[]>(cacheKey);
   if (cached) return cached;
 
-  const db = getDb();
-  const query = showInNavOnly 
-    ? 'SELECT * FROM categories WHERE show_in_nav = 1 ORDER BY order_index ASC' 
-    : 'SELECT * FROM categories ORDER BY order_index ASC';
-  const rows = await db.prepare(query).all<Category>();
-  const result = toPlain(rows);
-  return setToCache(cacheKey, result, 300);
+  try {
+    const db = getDb();
+    const query = showInNavOnly 
+      ? 'SELECT * FROM categories WHERE show_in_nav = 1 ORDER BY order_index ASC' 
+      : 'SELECT * FROM categories ORDER BY order_index ASC';
+    const rows = await db.prepare(query).all<Category>();
+    if (rows && rows.length > 0) {
+      return setToCache(cacheKey, toPlain(rows), 300);
+    }
+  } catch (e) {
+    console.warn('[data] getCategories DB query failed, using defaults:', e);
+  }
+
+  const fallback = showInNavOnly 
+    ? DEFAULT_CATEGORIES.filter(c => c.show_in_nav === 1) 
+    : DEFAULT_CATEGORIES;
+  return setToCache(cacheKey, fallback, 300);
 });
 
 export const getCategoryBySlug = cache(async (slug: string): Promise<Category | null> => {
-  const cacheKey = `category_slug_${slug}`;
+  const normalizedSlug = slug.toLowerCase().trim();
+  const cacheKey = `category_slug_${normalizedSlug}`;
   const cached = getFromCache<Category | null>(cacheKey);
   if (cached !== null) return cached;
 
-  const db = getDb();
-  const cat = await db.prepare('SELECT * FROM categories WHERE slug = ?').get<Category>(slug);
-  const result = cat ? toPlain(cat) : null;
-  return setToCache(cacheKey, result, 300);
+  try {
+    const db = getDb();
+    const cat = await db.prepare('SELECT * FROM categories WHERE slug = ?').get<Category>(normalizedSlug);
+    if (cat) {
+      return setToCache(cacheKey, toPlain(cat), 300);
+    }
+  } catch (e) {
+    console.warn(`[data] getCategoryBySlug('${normalizedSlug}') DB query failed:`, e);
+  }
+
+  const fallback = DEFAULT_CATEGORIES.find(c => c.slug === normalizedSlug) || null;
+  return setToCache(cacheKey, fallback, 300);
 });
 
 // 3. Articles
@@ -495,45 +535,73 @@ export async function searchVideos(query: string, limit = 20): Promise<VideoItem
 }
 
 // 4B. Shows
+export const DEFAULT_SHOWS: Show[] = [
+  { id: 'show-1', title: 'The Daily Brief', slug: 'the-daily-brief', description: 'Comprehensive morning intelligence briefing covering national security, geopolitics, and constitutional law.', host_name: 'Siddharth Nair', schedule_info: 'Weekdays 08:00 AM IST', cover_image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1200&q=80', order_index: 1, created_at: '2026-01-01T00:00:00Z', episode_count: 5 },
+  { id: 'show-2', title: 'Ground Report', slug: 'ground-report', description: 'Investigative field dispatches and telemetry inspections from India’s critical infrastructure corridors.', host_name: 'K. R. Madhavan', schedule_info: 'Saturdays 09:00 PM IST', cover_image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80', order_index: 2, created_at: '2026-01-01T00:00:00Z', episode_count: 4 },
+  { id: 'show-3', title: 'The Big Interview', slug: 'the-big-interview', description: 'Uncompromising dialogues with cabinet ministers, chief justices, corporate chiefs, and defense strategists.', host_name: 'Vikramaditya Roy', schedule_info: 'Sundays 08:00 PM IST', cover_image: 'https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&w=1200&q=80', order_index: 3, created_at: '2026-01-01T00:00:00Z', episode_count: 3 },
+  { id: 'show-4', title: 'News Explained', slug: 'news-explained', description: 'Visual breakdowns and constitutional analyses of the most intricate policy decisions.', host_name: 'Ayesha Sen', schedule_info: 'Tuesdays & Thursdays 07:00 PM IST', cover_image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80', order_index: 4, created_at: '2026-01-01T00:00:00Z', episode_count: 4 },
+  { id: 'show-5', title: 'Business Focus', slug: 'business-focus', description: 'Deep market analysis, fiscal policy scrutiny, and supply chain telemetry.', host_name: 'Priya Chawla', schedule_info: 'Daily Market Close 05:30 PM IST', cover_image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80', order_index: 5, created_at: '2026-01-01T00:00:00Z', episode_count: 2 },
+  { id: 'show-6', title: 'The Debate', slug: 'the-debate', description: 'Prime-time adversarial debate on constitutional governance and public policy.', host_name: 'Siddharth Nair', schedule_info: 'Weekdays 09:00 PM IST', cover_image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80', order_index: 6, created_at: '2026-01-01T00:00:00Z', episode_count: 3 },
+  { id: 'show-7', title: 'Special Investigation', slug: 'special-investigation', description: 'Long-term investigative journalism exposing systemic corruption and corporate misconduct.', host_name: 'Dr. Elena Vance', schedule_info: 'Monthly Special Edition', cover_image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80', order_index: 7, created_at: '2026-01-01T00:00:00Z', episode_count: 2 }
+];
+
 export const getShows = cache(async (): Promise<Show[]> => {
   const cached = getFromCache<Show[]>('shows_all');
   if (cached) return cached;
 
-  const db = getDb();
-  const rows = await db.prepare(`
-    SELECT 
-      s.*,
-      (SELECT COUNT(*) FROM videos v WHERE v.show_id = s.id) as episode_count
-    FROM shows s
-    ORDER BY s.order_index ASC, s.created_at ASC
-  `).all<Show>();
+  try {
+    const db = getDb();
+    const rows = await db.prepare(`
+      SELECT 
+        s.*,
+        (SELECT COUNT(*) FROM videos v WHERE v.show_id = s.id) as episode_count
+      FROM shows s
+      ORDER BY s.order_index ASC, s.created_at ASC
+    `).all<Show>();
 
-  const result = toPlain(rows);
-  return setToCache('shows_all', result, 300);
+    if (rows && rows.length > 0) {
+      return setToCache('shows_all', toPlain(rows), 300);
+    }
+  } catch (e) {
+    console.warn('[data] getShows DB query failed, using defaults:', e);
+  }
+
+  return setToCache('shows_all', DEFAULT_SHOWS, 300);
 });
 
 export const getShowBySlug = cache(async (slug: string): Promise<(Show & { videos: VideoItem[] }) | null> => {
-  const cacheKey = `show_slug_${slug}`;
+  const normalizedSlug = slug.toLowerCase().trim();
+  const cacheKey = `show_slug_${normalizedSlug}`;
   const cached = getFromCache<(Show & { videos: VideoItem[] }) | null>(cacheKey);
   if (cached !== null) return cached;
 
-  const db = getDb();
-  const row = await db.prepare(`
-    SELECT 
-      s.*,
-      (SELECT COUNT(*) FROM videos v WHERE v.show_id = s.id) as episode_count
-    FROM shows s
-    WHERE s.slug = ?
-  `).get<Show>(slug);
+  let show: (Show & { videos: VideoItem[] }) | null = null;
+  try {
+    const db = getDb();
+    const row = await db.prepare(`
+      SELECT 
+        s.*,
+        (SELECT COUNT(*) FROM videos v WHERE v.show_id = s.id) as episode_count
+      FROM shows s
+      WHERE s.slug = ?
+    `).get<Show>(normalizedSlug);
 
-  if (!row) {
-    setToCache(cacheKey, null, 15);
-    return null;
+    if (row) {
+      show = toPlain(row) as Show & { videos: VideoItem[] };
+      show.videos = await getVideosByShow(show.id, 30);
+    }
+  } catch (e) {
+    console.warn(`[data] getShowBySlug('${normalizedSlug}') DB query failed:`, e);
   }
 
-  const show = toPlain(row) as Show & { videos: VideoItem[] };
-  show.videos = await getVideosByShow(show.id, 30);
-  return setToCache(cacheKey, show, 60);
+  if (!show) {
+    const fallback = DEFAULT_SHOWS.find(s => s.slug === normalizedSlug);
+    if (fallback) {
+      show = { ...fallback, videos: [] };
+    }
+  }
+
+  return setToCache(cacheKey, show, show ? 300 : 15);
 });
 
 export async function getShowById(id: string): Promise<Show | null> {
@@ -645,42 +713,71 @@ export async function getLiveUpdates(liveBlogId: string, limit = 50): Promise<Li
 }
 
 // 7. Reporters
+export const DEFAULT_REPORTERS: Reporter[] = [
+  { id: 'rep-1', name: 'Siddharth Nair', slug: 'siddharth-nair', title: 'Editor-in-Chief & Legal Affairs Lead', beat: 'Constitutional Governance & Judiciary', bio: 'Siddharth has spent over two decades covering the Supreme Court of India, parliamentary jurisprudence, and institutional reform.', avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80', email: 'siddharth.nair@newsight.media', is_active: 1, created_at: '2026-01-01T00:00:00Z', reports_count: 14 },
+  { id: 'rep-2', name: 'Ayesha Sen', slug: 'ayesha-sen', title: 'Diplomatic Editor', beat: 'Geopolitics & Multilateral Pacts', bio: 'Ayesha reports on South Asian security architectures, Indo-Pacific maritime pacts, and UN climate assemblies from New Delhi and multilateral summits.', avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80', email: 'ayesha.sen@newsight.media', is_active: 1, created_at: '2026-01-01T00:00:00Z', reports_count: 11 },
+  { id: 'rep-3', name: 'K. R. Madhavan', slug: 'k-r-madhavan', title: 'Southern Bureau Chief', beat: 'Kerala, Coastal Ecology & Maritime Trade', bio: 'Stationed in Kochi and Thiruvananthapuram, Madhavan oversees Southern state coverage with deep expertise in Western Ghats conservation and port infrastructure.', avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80', email: 'madhavan@newsight.media', is_active: 1, created_at: '2026-01-01T00:00:00Z', reports_count: 9 },
+  { id: 'rep-4', name: 'Dr. Elena Vance', slug: 'elena-vance', title: 'Science & Aerospace Correspondent', beat: 'Space Exploration, Quantum Tech & Grid Transitions', bio: 'With a PhD in Astro-geophysics and twelve years in science reporting, Elena deconstructs deep-space satellite missions, fusion research, and national renewable grid transformations.', avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80', email: 'elena.vance@newsight.media', is_active: 1, created_at: '2026-01-01T00:00:00Z', reports_count: 8 },
+  { id: 'rep-5', name: 'Vikramaditya Roy', slug: 'vikramaditya-roy', title: 'Chief Economic Analyst', beat: 'Macroeconomics, Banking & Trade Policy', bio: 'Vikramaditya scrutinizes monetary policy resolutions, fiscal deficits, sovereign bond issuances, and global trade realignments.', avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80', email: 'vikram.roy@newsight.media', is_active: 1, created_at: '2026-01-01T00:00:00Z', reports_count: 7 },
+  { id: 'rep-6', name: 'Priya Chawla', slug: 'priya-chawla', title: 'Investigative Desk Reporter', beat: 'Environmental Compliance & Corporate Transparency', bio: 'Priya specializes in data-driven public interest investigations, tracking environmental violations, riverbed resource extraction, and corporate governance accountability.', avatar_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80', email: 'priya.chawla@newsight.media', is_active: 1, created_at: '2026-01-01T00:00:00Z', reports_count: 6 }
+];
+
 export const getReporters = cache(async (includeInactive = false): Promise<Reporter[]> => {
   const cacheKey = `reporters_${includeInactive}`;
   const cached = getFromCache<Reporter[]>(cacheKey);
   if (cached) return cached;
 
-  const db = getDb();
-  const whereClause = includeInactive ? '' : 'WHERE r.is_active = 1';
-  const query = `
-    SELECT 
-      r.*,
-      u.email as user_email,
-      u.role as user_role,
-      (SELECT COUNT(*) FROM articles a WHERE a.reporter_id = r.id) as reports_count
-    FROM reporters r
-    LEFT JOIN users u ON r.user_id = u.id
-    ${whereClause}
-    ORDER BY r.name ASC
-  `;
-  const rows = await db.prepare(query).all<any>();
-  const result = toPlain(rows.map(r => ({
-    ...r,
-    has_credentials: Boolean(r.user_id),
-    reports_count: Number(r.reports_count || 0)
-  })));
-  return setToCache(cacheKey, result, 60);
+  try {
+    const db = getDb();
+    const whereClause = includeInactive ? '' : 'WHERE r.is_active = 1';
+    const query = `
+      SELECT 
+        r.*,
+        u.email as user_email,
+        u.role as user_role,
+        (SELECT COUNT(*) FROM articles a WHERE a.reporter_id = r.id) as reports_count
+      FROM reporters r
+      LEFT JOIN users u ON r.user_id = u.id
+      ${whereClause}
+      ORDER BY r.name ASC
+    `;
+    const rows = await db.prepare(query).all<any>();
+    if (rows && rows.length > 0) {
+      const result = toPlain(rows.map(r => ({
+        ...r,
+        has_credentials: Boolean(r.user_id),
+        reports_count: Number(r.reports_count || 0)
+      })));
+      return setToCache(cacheKey, result, 60);
+    }
+  } catch (e) {
+    console.warn('[data] getReporters DB query failed, using defaults:', e);
+  }
+
+  const fallback = includeInactive 
+    ? DEFAULT_REPORTERS 
+    : DEFAULT_REPORTERS.filter(r => r.is_active === 1);
+  return setToCache(cacheKey, fallback, 60);
 });
 
 export const getReporterBySlug = cache(async (slug: string): Promise<Reporter | null> => {
-  const cacheKey = `reporter_slug_${slug}`;
+  const normalizedSlug = slug.toLowerCase().trim();
+  const cacheKey = `reporter_slug_${normalizedSlug}`;
   const cached = getFromCache<Reporter | null>(cacheKey);
   if (cached !== null) return cached;
 
-  const db = getDb();
-  const row = await db.prepare('SELECT * FROM reporters WHERE slug = ?').get<Reporter>(slug);
-  const result = row ? toPlain(row) : null;
-  return setToCache(cacheKey, result, 60);
+  try {
+    const db = getDb();
+    const row = await db.prepare('SELECT * FROM reporters WHERE slug = ?').get<Reporter>(normalizedSlug);
+    if (row) {
+      return setToCache(cacheKey, toPlain(row), 60);
+    }
+  } catch (e) {
+    console.warn(`[data] getReporterBySlug('${normalizedSlug}') DB query failed:`, e);
+  }
+
+  const fallback = DEFAULT_REPORTERS.find(r => r.slug === normalizedSlug) || null;
+  return setToCache(cacheKey, fallback, fallback ? 60 : 15);
 });
 
 export async function getArticlesByReporter(reporterId: string, limit = 10): Promise<Article[]> {

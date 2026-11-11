@@ -42,10 +42,27 @@ export interface NeonDbClient {
 const globalForDb = global as unknown as { __neon_db?: NeonDbClient };
 
 function getDatabaseUrl(): string {
-  if (process.env.DATABASE_URL) {
-    return process.env.DATABASE_URL;
+  const envCandidates = [
+    process.env.DATABASE_URL,
+    process.env.POSTGRES_URL,
+    process.env.POSTGRES_PRISMA_URL,
+    process.env.POSTGRES_URL_NON_POOLING,
+    process.env.DATABASE_URL_UNPOOLED
+  ];
+
+  for (const raw of envCandidates) {
+    if (raw && typeof raw === 'string') {
+      let url = raw.trim();
+      if ((url.startsWith('"') && url.endsWith('"')) || (url.startsWith("'") && url.endsWith("'"))) {
+        url = url.slice(1, -1).trim();
+      }
+      if (url.startsWith('postgres://') || url.startsWith('postgresql://')) {
+        return url;
+      }
+    }
   }
-  // Fallback to reading .env.local if running in script context
+
+  // Fallback to reading .env.local if running in local context
   try {
     const fs = require('fs');
     const path = require('path');
@@ -53,7 +70,7 @@ function getDatabaseUrl(): string {
     if (fs.existsSync(envPath)) {
       const content = fs.readFileSync(envPath, 'utf8');
       const match = content.match(/DATABASE_URL=["']?([^"'\r\n]+)["']?/);
-      if (match) return match[1];
+      if (match) return match[1].trim();
     }
   } catch (_) {}
 
