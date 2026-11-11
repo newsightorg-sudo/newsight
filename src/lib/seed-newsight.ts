@@ -392,7 +392,7 @@ export async function seedNewsight() {
   }
 
   // 5. Ensure core written articles exist with proper categories
-  const articleCheck = db.prepare('SELECT COUNT(*) as count FROM articles').get() as { count: number };
+  const articleCheck = await db.prepare('SELECT COUNT(*) as count FROM articles').get() as { count: number };
   if (!articleCheck || articleCheck.count < 5) {
     // Insert top articles
     const insertArt = db.prepare(`

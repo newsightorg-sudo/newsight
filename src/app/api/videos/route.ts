@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
-import { getVideos, getAllVideosAdmin } from '@/lib/data';
+import { getVideos, getAllVideosAdmin, invalidateDataCache } from '@/lib/data';
 
 export async function GET() {
-  const videos = getAllVideosAdmin();
+  const videos = await getAllVideosAdmin();
   return NextResponse.json({ videos });
 }
 
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     const slug = slugify(title) + '-' + Math.floor(Math.random() * 1000);
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO videos (
         id, title, slug, summary, video_url, thumbnail_url, duration, 
         category, reporter_id, show_id, video_type, is_featured, 
@@ -61,6 +61,7 @@ export async function POST(req: Request) {
       now
     );
 
+    invalidateDataCache('video');
     return NextResponse.json({ success: true, video: { id, title, slug } });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error publishing video.' }, { status: 500 });
@@ -82,8 +83,9 @@ export async function DELETE(req: Request) {
     }
 
     const db = getDb();
-    db.prepare('DELETE FROM videos WHERE id = ?').run(id);
+    await db.prepare('DELETE FROM videos WHERE id = ?').run(id);
 
+    invalidateDataCache('video');
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error deleting video.' }, { status: 500 });

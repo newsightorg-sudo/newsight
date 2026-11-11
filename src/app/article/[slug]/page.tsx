@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
   getArticleBySlug, getRelatedArticles, getEditorialSettings, 
-  getCommentsForArticle, getVideosByCategory 
+  getCommentsForArticle, getVideosByCategory, getLatestArticles 
 } from '@/lib/data';
 import { getCurrentUser } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
@@ -17,13 +17,22 @@ import {
   Clock, Calendar, AlertTriangle, User, PlaySquare, ChevronRight, Share2 
 } from 'lucide-react';
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const articles = await getLatestArticles(50);
+  return articles.map((a) => ({
+    slug: a.slug,
+  }));
+}
+
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
   if (!article) return { title: 'Article Not Found | NEWSIGHT' };
 
   return {
@@ -42,17 +51,19 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     notFound();
   }
 
-  const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const relatedArticles = getRelatedArticles(article.id, article.category_id, 3);
-  const relatedVideos = getVideosByCategory(article.category_name || 'News', 3);
-  const comments = getCommentsForArticle(article.id);
+  const [user, settings, relatedArticles, relatedVideos, comments] = await Promise.all([
+    getCurrentUser(),
+    getEditorialSettings(),
+    getRelatedArticles(article.id, article.category_id, 3),
+    getVideosByCategory(article.category_name || 'News', 3),
+    getCommentsForArticle(article.id)
+  ]);
 
   // Schema.org NewsArticle structured data
   const jsonLd = {
@@ -79,7 +90,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   };
 
   return (
-    <PublicLayout>
+    <PublicLayout user={user} settings={settings}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

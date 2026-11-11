@@ -20,7 +20,7 @@ export default function AdminShell({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-[#0B1220] text-[#174A7E] dark:text-[#F4F7FB] font-sans transition-colors">
+    <div className="flex h-screen overflow-hidden bg-white dark:bg-[#0B1220] text-[#174A7E] dark:text-[#F4F7FB] font-sans transition-colors">
       {/* Sidebar */}
       <AdminSidebar
         userRole={userRole}
@@ -32,7 +32,7 @@ export default function AdminShell({
       />
 
       {/* Main View Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
         {/* Sticky Top Header */}
         <AdminTopHeader
           userName={userName}

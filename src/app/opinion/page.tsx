@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 
 export default async function OpinionPage() {
   const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const categories = getCategories(true);
-  const opinions = getOpinionArticles(12);
+  const settings = await getEditorialSettings();
+  const categories = await getCategories(true);
+  const opinions = await getOpinionArticles(12);
 
   return (
     <PublicLayout

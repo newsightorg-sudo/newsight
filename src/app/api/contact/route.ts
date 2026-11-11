@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const id = `msg-${Date.now()}`;
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO contact_messages (id, name, email, department, subject, message, status, created_at)
       VALUES (?, ?, ?, ?, ?, ?, 'NEW', ?)
     `).run(id, name, email, department || 'General', subject || 'No Subject', message, now);

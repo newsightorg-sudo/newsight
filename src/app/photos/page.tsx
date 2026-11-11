@@ -11,11 +11,15 @@ export const metadata: Metadata = {
   description: 'Documentary photography, coastal chronicles, cultural heritage, and ground photo essays.',
 };
 
+export const revalidate = 60;
+
 export default async function PhotoStoriesPage() {
-  const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const categories = getCategories(true);
-  const stories = getPhotoStories(10);
+  const [user, settings, categories, stories] = await Promise.all([
+    getCurrentUser(),
+    getEditorialSettings(),
+    getCategories(true),
+    getPhotoStories(10)
+  ]);
 
   return (
     <PublicLayout

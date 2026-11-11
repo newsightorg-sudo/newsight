@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     const db = getDb();
-    const existing = db.prepare('SELECT id, is_active FROM newsletter_subscribers WHERE email = ?').get(email) as any;
+    const existing = await db.prepare('SELECT id, is_active FROM newsletter_subscribers WHERE email = ?').get(email) as any;
 
     const now = new Date().toISOString();
 
@@ -18,13 +18,13 @@ export async function POST(req: Request) {
       if (existing.is_active) {
         return NextResponse.json({ message: 'You are already subscribed to NEWSIGHT briefings.' });
       }
-      db.prepare('UPDATE newsletter_subscribers SET is_active = 1, edition_preference = ?, subscribed_at = ? WHERE email = ?')
+      await db.prepare('UPDATE newsletter_subscribers SET is_active = 1, edition_preference = ?, subscribed_at = ? WHERE email = ?')
         .run(edition_preference, now, email);
       return NextResponse.json({ success: true, message: 'Your subscription has been reactivated.' });
     }
 
     const id = `sub-${Date.now()}`;
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO newsletter_subscribers (id, email, edition_preference, is_active, subscribed_at)
       VALUES (?, ?, ?, 1, ?)
     `).run(id, email, edition_preference, now);

@@ -16,6 +16,7 @@ interface ArticleFormProps {
   reporters: Reporter[];
   userRole?: UserRole;
   isEditing?: boolean;
+  defaultReporterId?: string;
 }
 
 export default function ArticleForm({
@@ -24,6 +25,7 @@ export default function ArticleForm({
   reporters,
   userRole,
   isEditing = false,
+  defaultReporterId,
 }: ArticleFormProps) {
   const router = useRouter();
 
@@ -31,7 +33,7 @@ export default function ArticleForm({
   const [deck, setDeck] = useState(initialArticle?.deck || '');
   const [content, setContent] = useState(initialArticle?.body || '');
   const [categoryId, setCategoryId] = useState(initialArticle?.category_id || categories[0]?.id || '');
-  const [reporterId, setReporterId] = useState(initialArticle?.reporter_id || reporters[0]?.id || '');
+  const [reporterId, setReporterId] = useState(initialArticle?.reporter_id || defaultReporterId || reporters[0]?.id || '');
   const [articleType, setArticleType] = useState(initialArticle?.article_type || 'NEWS');
   const [featuredImage, setFeaturedImage] = useState(initialArticle?.featured_image || '');
   const [imageCaption, setImageCaption] = useState(initialArticle?.image_caption || '');

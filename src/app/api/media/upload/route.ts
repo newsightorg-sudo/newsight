@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     const assetId = `med-${Date.now()}`;
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO media_assets (id, filename, url, alt_text, caption, credit, file_type, file_size, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(assetId, file.name, publicUrl, altText, caption, credit, file.type, file.size, now);
@@ -74,6 +74,6 @@ export async function POST(req: Request) {
 
 export async function GET() {
   const db = getDb();
-  const assets = db.prepare('SELECT * FROM media_assets ORDER BY created_at DESC LIMIT 50').all();
+  const assets = await db.prepare('SELECT * FROM media_assets ORDER BY created_at DESC LIMIT 50').all();
   return NextResponse.json({ assets });
 }

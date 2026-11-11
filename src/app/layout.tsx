@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import React, { Suspense } from 'react';
 import './globals.css';
 import { ThemeProvider } from '@/components/public/ThemeProvider';
+import NavigationProgressBar from '@/components/public/NavigationProgressBar';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,8 +39,6 @@ export const viewport = {
     { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
   ],
 };
-
-export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,
@@ -78,6 +78,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-[#E50914] selection:text-white flex flex-col">
+        <Suspense fallback={null}>
+          <NavigationProgressBar />
+        </Suspense>
         <ThemeProvider>
           {children}
         </ThemeProvider>

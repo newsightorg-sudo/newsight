@@ -13,7 +13,7 @@ import {
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 30;
 
 function formatReadingTime(duration?: string) {
   if (!duration) return '5 min read';
@@ -25,22 +25,35 @@ function formatReadingTime(duration?: string) {
 }
 
 export default async function HomePage() {
-  const allVideos = getVideos(12);
+  const [
+    allVideos,
+    justAdded,
+    editorPicks,
+    topRankedVideos,
+    shows,
+    latestArticles,
+    politicsArticles,
+    businessArticles,
+    techArticles,
+    worldArticles,
+    opinionArticles
+  ] = await Promise.all([
+    getVideos(12),
+    getJustAddedVideos(4),
+    getFeaturedVideos(4),
+    getTopVideos(4),
+    getShows(),
+    getLatestArticles(8),
+    getArticlesByCategory('politics', 3),
+    getArticlesByCategory('business', 3),
+    getArticlesByCategory('technology', 3),
+    getArticlesByCategory('world', 3),
+    getOpinionArticles(3)
+  ]);
+
   const featured = allVideos.find(v => v.is_featured === 1) || allVideos[0];
   const sideRailVideos = allVideos.filter(v => v.id !== featured?.id).slice(0, 4);
-  const latestVideos = getVideos(8);
-  const justAdded = getJustAddedVideos(4);
-  const editorPicks = getFeaturedVideos(4);
-  const topRankedVideos = getTopVideos(4);
-  const shows = getShows();
-  
-  // Written news articles
-  const latestArticles = getLatestArticles(8);
-  const politicsArticles = getArticlesByCategory('politics', 3);
-  const businessArticles = getArticlesByCategory('business', 3);
-  const techArticles = getArticlesByCategory('technology', 3);
-  const worldArticles = getArticlesByCategory('world', 3);
-  const opinionArticles = getOpinionArticles(3);
+  const latestVideos = allVideos.slice(0, 8);
 
   return (
     <PublicLayout>

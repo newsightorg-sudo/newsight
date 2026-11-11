@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export default async function NewsletterPage() {
   const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const categories = getCategories(true);
+  const settings = await getEditorialSettings();
+  const categories = await getCategories(true);
 
   return (
     <PublicLayout

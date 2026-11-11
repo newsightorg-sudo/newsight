@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   description: 'Most-read journalistic investigations, field reports, and prime editorial stories on NEWSIGHT ranked by verified readership.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function TopVideosPage() {
-  const topVideos = getTopVideos(16);
+  const topVideos = await getTopVideos(16);
 
   return (
     <PublicLayout>

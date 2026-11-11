@@ -49,7 +49,7 @@ export default function AdminSidebar({
         { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
         { name: 'Articles', href: '/admin/articles', icon: FileText },
         { name: 'Review Queue', href: '/admin/review-queue', icon: CheckSquare, badge: 'Workflow' },
-        { name: 'Reporters & Staff', href: '/admin/reporters', icon: Users },
+        { name: 'Reporters & Staff', href: '/admin/reporters', icon: Users, adminOnly: true },
         { name: 'Categories & Desks', href: '/admin/categories', icon: FolderTree },
       ],
     },
@@ -159,7 +159,7 @@ export default function AdminSidebar({
       )}
 
       {/* Navigation Groups */}
-      <nav className="flex-1 px-2.5 py-3 space-y-4 overflow-y-auto">
+      <nav className="flex-1 px-2.5 py-3 space-y-4 overflow-y-auto min-h-0">
         {navigationGroups.map((group) => {
           // Filter out adminOnly items if not authorized
           const visibleItems = group.items.filter((item) => !item.adminOnly || userRole === 'SUPER_ADMIN');
@@ -220,7 +220,7 @@ export default function AdminSidebar({
       </nav>
 
       {/* Footer / Sign Out Button */}
-      <div className="p-3 border-t border-[#E2EAF2] dark:border-[#27364B] shrink-0 bg-white dark:bg-[#0B1220]/40">
+      <div className="mt-auto p-3 border-t border-[#E2EAF2] dark:border-[#27364B] shrink-0 bg-white dark:bg-[#0B1220]/40">
         <button
           type="button"
           onClick={handleLogout}
@@ -240,7 +240,7 @@ export default function AdminSidebar({
     <>
       {/* Desktop Fixed Vertical Sidebar */}
       <aside
-        className={`hidden lg:flex flex-col shrink-0 h-screen sticky top-0 transition-all duration-200 z-40 ${
+        className={`hidden lg:flex flex-col shrink-0 h-full transition-all duration-200 z-40 ${
           isCollapsed ? 'w-20' : 'w-64'
         }`}
       >

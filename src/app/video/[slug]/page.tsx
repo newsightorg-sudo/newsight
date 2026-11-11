@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
-  getVideoBySlug, getRelatedVideos, getArticlesByCategory 
+  getVideoBySlug, getRelatedVideos, getArticlesByCategory, getVideos 
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 import PublicLayout from '@/components/public/PublicLayout';
@@ -13,6 +13,13 @@ import SocialShareBar from '@/components/public/SocialShareBar';
 import { 
   Clock, Eye, Film, Share2, User, ChevronRight, Newspaper, ArrowLeft
 } from 'lucide-react';
+
+export async function generateStaticParams() {
+  const videos = await getVideos(50);
+  return videos.map((v) => ({
+    slug: v.slug,
+  }));
+}
 
 interface VideoPageProps {
   params: Promise<{ slug: string }>;
@@ -29,7 +36,7 @@ function formatReadingTime(duration?: string) {
 
 export async function generateMetadata({ params }: VideoPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const vid = getVideoBySlug(slug);
+  const vid = await getVideoBySlug(slug);
   if (!vid) return { title: 'Story Not Found | NEWSIGHT' };
 
   return {
@@ -44,16 +51,20 @@ export async function generateMetadata({ params }: VideoPageProps): Promise<Meta
   };
 }
 
+export const revalidate = 60;
+
 export default async function VideoWatchPage({ params }: VideoPageProps) {
   const { slug } = await params;
-  const video = getVideoBySlug(slug);
+  const video = await getVideoBySlug(slug);
 
   if (!video) {
     notFound();
   }
 
-  const relatedVideos = getRelatedVideos(video.id, video.category, 6);
-  const relatedArticles = getArticlesByCategory(video.category.toLowerCase(), 3);
+  const [relatedVideos, relatedArticles] = await Promise.all([
+    getRelatedVideos(video.id, video.category, 6),
+    getArticlesByCategory(video.category.toLowerCase(), 3)
+  ]);
 
   return (
     <PublicLayout>

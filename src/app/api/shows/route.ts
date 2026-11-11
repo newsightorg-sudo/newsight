@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
-import { getShows } from '@/lib/data';
+import { getShows, invalidateDataCache } from '@/lib/data';
 
 export async function GET() {
-  const shows = getShows();
+  const shows = await getShows();
   return NextResponse.json({ shows });
 }
 
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const slug = slugify(title);
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO shows (id, title, slug, description, cover_image, banner_image, host_name, schedule_info, order_index, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       now
     );
 
+    invalidateDataCache('show');
     return NextResponse.json({ success: true, show: { id, title, slug } });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error creating show.' }, { status: 500 });
@@ -72,8 +73,9 @@ export async function DELETE(req: Request) {
     }
 
     const db = getDb();
-    db.prepare('DELETE FROM shows WHERE id = ?').run(id);
+    await db.prepare('DELETE FROM shows WHERE id = ?').run(id);
 
+    invalidateDataCache('show');
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error deleting show.' }, { status: 500 });

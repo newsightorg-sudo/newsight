@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Ethical rules governing financial disclosures, gift bans, political neutrality, and reporter independence.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function ConflictOfInterestPage() {
   return (

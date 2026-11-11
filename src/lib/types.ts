@@ -28,6 +28,10 @@ export interface Reporter {
   linkedin?: string;
   is_active: number;
   created_at: string;
+  reports_count?: number;
+  has_credentials?: boolean;
+  user_email?: string;
+  user_role?: UserRole;
 }
 
 export interface Category {

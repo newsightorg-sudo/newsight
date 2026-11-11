@@ -9,7 +9,7 @@ interface Params {
 
 export async function GET(req: Request, { params }: Params) {
   const { id } = await params;
-  const updates = getLiveUpdates(id);
+  const updates = await getLiveUpdates(id);
   return NextResponse.json({ updates });
 }
 
@@ -33,7 +33,7 @@ export async function POST(req: Request, { params }: Params) {
     const timestampStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' IST';
     const isoNow = now.toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO live_updates (id, live_blog_id, title, content, image_url, author_name, is_key_event, timestamp, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
@@ -49,7 +49,7 @@ export async function POST(req: Request, { params }: Params) {
     );
 
     // Update parent live blog's updated_at
-    db.prepare('UPDATE live_blogs SET updated_at = ? WHERE id = ?').run(isoNow, liveBlogId);
+    await db.prepare('UPDATE live_blogs SET updated_at = ? WHERE id = ?').run(isoNow, liveBlogId);
 
     return NextResponse.json({
       success: true,

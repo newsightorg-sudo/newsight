@@ -13,7 +13,7 @@ export default async function AdminSubscribersPage() {
   }
 
   const db = getDb();
-  const subscribers = db.prepare('SELECT * FROM newsletter_subscribers ORDER BY subscribed_at DESC').all() as any[];
+  const subscribers = await db.prepare('SELECT * FROM newsletter_subscribers ORDER BY subscribed_at DESC').all() as any[];
 
   return (
     <div className="space-y-6 font-sans">

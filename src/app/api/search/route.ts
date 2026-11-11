@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const videos = searchVideos(q, 4);
-    const articles = searchArticles(q).slice(0, 4);
+    const videos = await searchVideos(q, 4);
+    const articles = (await searchArticles(q)).slice(0, 4);
 
     return NextResponse.json({
       videos: videos.map(v => ({

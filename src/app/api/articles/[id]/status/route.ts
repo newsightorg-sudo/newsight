@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getCurrentUser, canPublish } from '@/lib/auth';
+import { invalidateDataCache } from '@/lib/data';
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -42,7 +43,8 @@ export async function POST(req: Request, { params }: Params) {
     updateQuery += ' WHERE id = ?';
     queryParams.push(id);
 
-    db.prepare(updateQuery).run(...queryParams);
+    await db.prepare(updateQuery).run(...queryParams);
+    invalidateDataCache('article');
 
     return NextResponse.json({
       success: true,

@@ -26,10 +26,11 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = '', tab = 'all', category = 'all' } = await searchParams;
-  const categories = getCategories();
-
-  const articles = q.trim() ? searchArticles(q, { category }) : [];
-  const videos = q.trim() ? searchVideos(q) : [];
+  const [categories, articles, videos] = await Promise.all([
+    getCategories(),
+    q.trim() ? searchArticles(q, { category }) : Promise.resolve([]),
+    q.trim() ? searchVideos(q) : Promise.resolve([])
+  ]);
 
   const totalResults = articles.length + videos.length;
   const showVideos = tab === 'all' || tab === 'videos';

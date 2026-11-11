@@ -5,7 +5,7 @@ import { getAllArticlesAdmin, getCategories, getReporters } from '@/lib/data';
 import ArticleManagementView from '@/components/admin/ArticleManagementView';
 
 interface ArticlesPageProps {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; author?: string }>;
 }
 
 export default async function AdminArticlesPage({ searchParams }: ArticlesPageProps) {
@@ -14,10 +14,12 @@ export default async function AdminArticlesPage({ searchParams }: ArticlesPagePr
     redirect('/admin/login');
   }
 
-  const { status = 'ALL' } = await searchParams;
-  const articles = getAllArticlesAdmin('ALL');
-  const categories = getCategories();
-  const reporters = getReporters();
+  const { status = 'ALL', author = 'ALL' } = await searchParams;
+  const [articles, categories, reporters] = await Promise.all([
+    getAllArticlesAdmin('ALL'),
+    getCategories(),
+    getReporters()
+  ]);
 
   return (
     <ArticleManagementView
@@ -26,6 +28,7 @@ export default async function AdminArticlesPage({ searchParams }: ArticlesPagePr
       reporters={reporters}
       userRole={user.role}
       initialStatus={status}
+      initialAuthor={author}
     />
   );
 }

@@ -8,13 +8,15 @@ import { formatDate } from '@/lib/utils';
 import PublicLayout from '@/components/public/PublicLayout';
 import { Camera, Calendar, User } from 'lucide-react';
 
+export const revalidate = 60;
+
 interface PhotoStoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: PhotoStoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const story = getPhotoStoryBySlug(slug);
+  const story = await getPhotoStoryBySlug(slug);
   if (!story) return { title: 'Photo Essay Not Found' };
 
   return {
@@ -25,15 +27,17 @@ export async function generateMetadata({ params }: PhotoStoryPageProps): Promise
 
 export default async function PhotoStoryDetailPage({ params }: PhotoStoryPageProps) {
   const { slug } = await params;
-  const story = getPhotoStoryBySlug(slug);
+  const story = await getPhotoStoryBySlug(slug);
 
   if (!story) {
     notFound();
   }
 
-  const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const categories = getCategories(true);
+  const [user, settings, categories] = await Promise.all([
+    getCurrentUser(),
+    getEditorialSettings(),
+    getCategories(true)
+  ]);
 
   return (
     <PublicLayout

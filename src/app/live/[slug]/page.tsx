@@ -15,7 +15,7 @@ interface LiveBlogPageProps {
 
 export async function generateMetadata({ params }: LiveBlogPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const blog = getLiveBlogBySlug(slug);
+  const blog = await getLiveBlogBySlug(slug);
   if (!blog) return { title: 'Live Blog Not Found' };
 
   return {
@@ -26,15 +26,15 @@ export async function generateMetadata({ params }: LiveBlogPageProps): Promise<M
 
 export default async function LiveBlogPage({ params }: LiveBlogPageProps) {
   const { slug } = await params;
-  const blog = getLiveBlogBySlug(slug);
+  const blog = await getLiveBlogBySlug(slug);
 
   if (!blog) {
     notFound();
   }
 
   const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const categories = getCategories(true);
+  const settings = await getEditorialSettings();
+  const categories = await getCategories(true);
 
   return (
     <PublicLayout

@@ -5,7 +5,7 @@ export async function seedDatabase() {
   const db = getDb();
 
   // Check if already seeded
-  const checkArticles = db.prepare('SELECT COUNT(*) as count FROM articles').get() as { count: number };
+  const checkArticles = await db.prepare('SELECT COUNT(*) as count FROM articles').get() as { count: number };
   if (checkArticles && checkArticles.count > 0) {
     return; // Already populated
   }

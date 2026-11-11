@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
-  getShowBySlug, getVideosByShow, getArticlesByCategory 
+  getShowBySlug, getVideosByShow, getArticlesByCategory, getShows 
 } from '@/lib/data';
 import PublicLayout from '@/components/public/PublicLayout';
 import VideoPlayer from '@/components/public/VideoPlayer';
@@ -13,13 +13,22 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const shows = await getShows();
+  return shows.map((show) => ({
+    slug: show.slug,
+  }));
+}
+
 interface ShowPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: ShowPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const show = getShowBySlug(slug);
+  const show = await getShowBySlug(slug);
   if (!show) return { title: 'Show Not Found | NEWSIGHT' };
 
   return {
@@ -30,7 +39,7 @@ export async function generateMetadata({ params }: ShowPageProps): Promise<Metad
 
 export default async function ShowDetailPage({ params }: ShowPageProps) {
   const { slug } = await params;
-  const show = getShowBySlug(slug);
+  const show = await getShowBySlug(slug);
 
   if (!show) {
     notFound();

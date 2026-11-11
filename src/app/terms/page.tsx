@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Terms governing the access, viewing, syndication, and usage of NEWSIGHT video and written content.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function TermsPage() {
   return (

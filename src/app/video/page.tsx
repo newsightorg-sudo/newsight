@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: 'In-depth visual investigations, ground reports, explainers, and longform photojournalism stories.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 30;
 
 interface VideoHubProps {
   searchParams: Promise<{ category?: string; sort?: string }>;
@@ -31,9 +31,12 @@ function formatReadingTime(duration?: string) {
 
 export default async function VideoHubPage({ searchParams }: VideoHubProps) {
   const { category, sort } = await searchParams;
-  const categories = getCategories();
-  const shows = getShows();
-  let videos = getVideos(30);
+  const [categories, shows, allVideos] = await Promise.all([
+    getCategories(),
+    getShows(),
+    getVideos(30)
+  ]);
+  let videos = allVideos;
 
   if (category && category !== 'all') {
     videos = videos.filter(v => v.category.toLowerCase().includes(category.toLowerCase()));

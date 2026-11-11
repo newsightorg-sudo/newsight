@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   description: 'Explore NEWSIGHT’s flagship investigative programs, debate shows, deep explainers, and prime-time broadcasts.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function ShowsDirectoryPage() {
-  const shows = getShows();
+  const shows = await getShows();
 
   return (
     <PublicLayout>

@@ -13,8 +13,8 @@ export default async function ReviewQueuePage() {
     redirect('/admin/login');
   }
 
-  const inReviewArticles = getAllArticlesAdmin('IN_REVIEW');
-  const approvedArticles = getAllArticlesAdmin('APPROVED');
+  const inReviewArticles = await getAllArticlesAdmin('IN_REVIEW');
+  const approvedArticles = await getAllArticlesAdmin('APPROVED');
 
   return (
     <div className="space-y-6 font-sans">

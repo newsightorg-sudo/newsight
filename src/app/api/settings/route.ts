@@ -3,7 +3,7 @@ import { getEditorialSettings, updateEditorialSettings } from '@/lib/data';
 import { getCurrentUser, canManageSettings } from '@/lib/auth';
 
 export async function GET() {
-  const settings = getEditorialSettings();
+  const settings = await getEditorialSettings();
   return NextResponse.json({ settings });
 }
 
@@ -15,7 +15,7 @@ export async function PUT(req: Request) {
     }
 
     const updates = await req.json();
-    updateEditorialSettings(updates);
+    await updateEditorialSettings(updates);
 
     return NextResponse.json({ success: true, message: 'Settings updated successfully.' });
   } catch (error: any) {

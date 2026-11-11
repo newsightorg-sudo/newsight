@@ -17,14 +17,14 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
 
   const { id } = await params;
   const db = getDb();
-  const article = db.prepare('SELECT * FROM articles WHERE id = ?').get(id) as any;
+  const article = await db.prepare('SELECT * FROM articles WHERE id = ?').get(id) as any;
 
   if (!article) {
     notFound();
   }
 
-  const categories = getCategories(false);
-  const reporters = getReporters();
+  const categories = await getCategories(false);
+  const reporters = await getReporters();
 
   return (
     <div className="flex-1 flex flex-col min-w-0">

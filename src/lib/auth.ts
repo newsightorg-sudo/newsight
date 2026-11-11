@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
@@ -47,7 +48,7 @@ export async function verifySessionToken(token: string): Promise<AuthSession | n
   }
 }
 
-export async function getCurrentUser(): Promise<AuthSession | null> {
+export const getCurrentUser = cache(async (): Promise<AuthSession | null> => {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(COOKIE_NAME)?.value;
@@ -56,11 +57,11 @@ export async function getCurrentUser(): Promise<AuthSession | null> {
   } catch (e) {
     return null;
   }
-}
+});
 
 export async function verifyUserCredentials(email: string, password: string): Promise<AuthSession | null> {
   const db = getDb();
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as any;
+  const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email) as any;
   if (!user || !user.password_hash) {
     return null;
   }
@@ -77,6 +78,10 @@ export async function verifyUserCredentials(email: string, password: string): Pr
     role: user.role as UserRole,
     avatar_url: user.avatar_url
   };
+}
+
+export function isAdmin(role?: UserRole): boolean {
+  return role === 'SUPER_ADMIN';
 }
 
 export function canPublish(role?: UserRole): boolean {

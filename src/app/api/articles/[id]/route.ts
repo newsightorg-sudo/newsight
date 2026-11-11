@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getCurrentUser, canPublish, canEditAnyArticle } from '@/lib/auth';
 import { estimateReadingTime } from '@/lib/utils';
+import { invalidateDataCache } from '@/lib/data';
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -10,7 +11,7 @@ interface Params {
 export async function GET(req: Request, { params }: Params) {
   const { id } = await params;
   const db = getDb();
-  const article = db.prepare('SELECT * FROM articles WHERE id = ?').get(id);
+  const article = await db.prepare('SELECT * FROM articles WHERE id = ?').get(id);
 
   if (!article) {
     return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
@@ -28,7 +29,7 @@ export async function PUT(req: Request, { params }: Params) {
 
     const { id } = await params;
     const db = getDb();
-    const existing = db.prepare('SELECT * FROM articles WHERE id = ?').get(id) as any;
+    const existing = await db.prepare('SELECT * FROM articles WHERE id = ?').get(id) as any;
 
     if (!existing) {
       return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
@@ -68,7 +69,7 @@ export async function PUT(req: Request, { params }: Params) {
 
     const readingTime = content ? estimateReadingTime(content) : existing.reading_time_minutes;
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE articles SET
         title = ?,
         deck = ?,
@@ -115,6 +116,7 @@ export async function PUT(req: Request, { params }: Params) {
       id
     );
 
+    invalidateDataCache('article');
     return NextResponse.json({ success: true, message: 'Article updated successfully.' });
   } catch (error: any) {
     return NextResponse.json(
@@ -133,8 +135,9 @@ export async function DELETE(req: Request, { params }: Params) {
 
     const { id } = await params;
     const db = getDb();
-    db.prepare('DELETE FROM articles WHERE id = ?').run(id);
+    await db.prepare('DELETE FROM articles WHERE id = ?').run(id);
 
+    invalidateDataCache('article');
     return NextResponse.json({ success: true, message: 'Article deleted successfully.' });
   } catch (error: any) {
     return NextResponse.json(

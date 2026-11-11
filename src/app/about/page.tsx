@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Our mission, editorial philosophy, verification methodology, and commitment to independent digital journalism.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function AboutPage() {
   return (

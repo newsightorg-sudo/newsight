@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
-  getReporterBySlug, getArticlesByReporter, getVideos 
+  getReporterBySlug, getArticlesByReporter, getVideos, getReporters 
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 import PublicLayout from '@/components/public/PublicLayout';
@@ -13,13 +13,22 @@ import {
   Newspaper, ChevronRight 
 } from 'lucide-react';
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const reporters = await getReporters();
+  return reporters.map((r) => ({
+    slug: r.slug,
+  }));
+}
+
 interface ReporterPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: ReporterPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const reporter = getReporterBySlug(slug);
+  const reporter = await getReporterBySlug(slug);
   if (!reporter) return { title: 'Reporter Not Found | NEWSIGHT' };
 
   return {
@@ -30,14 +39,17 @@ export async function generateMetadata({ params }: ReporterPageProps): Promise<M
 
 export default async function ReporterProfilePage({ params }: ReporterPageProps) {
   const { slug } = await params;
-  const reporter = getReporterBySlug(slug);
+  const reporter = await getReporterBySlug(slug);
 
   if (!reporter) {
     notFound();
   }
 
-  const articles = getArticlesByReporter(reporter.id, 20);
-  const reporterVideos = getVideos(12).filter(v => v.reporter_id === reporter.id);
+  const [articles, allVideos] = await Promise.all([
+    getArticlesByReporter(reporter.id, 20),
+    getVideos(12)
+  ]);
+  const reporterVideos = allVideos.filter((v: any) => v.reporter_id === reporter.id);
 
   return (
     <PublicLayout>
@@ -109,7 +121,7 @@ export default async function ReporterProfilePage({ params }: ReporterPageProps)
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {reporterVideos.map((video) => (
+              {reporterVideos.map((video: any) => (
                 <VideoCard key={video.id} video={video} />
               ))}
             </div>

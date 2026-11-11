@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const id = `comm-${Date.now()}`;
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO comments (id, article_id, author_name, author_email, content, status, created_at)
       VALUES (?, ?, ?, ?, ?, 'APPROVED', ?)
     `).run(id, article_id, author_name, author_email || '', content, now);

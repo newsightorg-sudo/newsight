@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 
 export default async function KeralaBureauPage() {
   const user = await getCurrentUser();
-  const settings = getEditorialSettings();
-  const categories = getCategories(true);
-  const articles = getKeralaArticles('All', 20);
+  const settings = await getEditorialSettings();
+  const categories = await getCategories(true);
+  const articles = await getKeralaArticles('All', 20);
 
   return (
     <PublicLayout

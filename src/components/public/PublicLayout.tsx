@@ -5,7 +5,6 @@ import BreakingNewsBar from './BreakingNewsBar';
 import NewsightFooter from './NewsightFooter';
 import MobileBottomNav from './MobileBottomNav';
 import { getEditorialSettings, getCategories, getShows, getBreakingArticle } from '@/lib/data';
-import { getCurrentUser } from '@/lib/auth';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -24,11 +23,13 @@ export default async function PublicLayout({
   categories: initialCategories,
   activeSidebar
 }: PublicLayoutProps) {
-  const user = initialUser !== undefined ? initialUser : await getCurrentUser();
-  const settings = initialSettings || getEditorialSettings();
-  const categories = initialCategories || getCategories(true);
-  const shows = getShows();
-  const breakingStory = getBreakingArticle();
+  const [settings, categories, shows, breakingStory] = await Promise.all([
+    initialSettings ? Promise.resolve(initialSettings) : getEditorialSettings(),
+    initialCategories ? Promise.resolve(initialCategories) : getCategories(true),
+    getShows(),
+    getBreakingArticle()
+  ]);
+  const user = initialUser || null;
 
   const breakingAlert = {
     title: breakingStory?.title || settings.breaking_headline,

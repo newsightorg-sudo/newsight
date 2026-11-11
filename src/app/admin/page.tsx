@@ -20,14 +20,17 @@ export default async function AdminDashboardPage() {
     redirect('/admin/login');
   }
 
-  const stats = getEditorialStats();
-  const allArticles = getAllArticlesAdmin('ALL');
+  const [stats, allArticles, settings, shows, categories] = await Promise.all([
+    getEditorialStats(),
+    getAllArticlesAdmin('ALL'),
+    getEditorialSettings(),
+    getShows(),
+    getCategories()
+  ]);
+
   const inReviewArticles = allArticles.filter((a) => a.status === 'IN_REVIEW').slice(0, 5);
   const recentlyPublished = allArticles.filter((a) => a.status === 'PUBLISHED').slice(0, 6);
   const recentActivity = allArticles.slice(0, 6);
-  const settings = getEditorialSettings();
-  const shows = getShows();
-  const categories = getCategories();
 
   // Dynamic time-of-day greeting
   const hour = new Date().getHours();

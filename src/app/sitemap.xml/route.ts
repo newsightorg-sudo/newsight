@@ -2,8 +2,8 @@ import { getDb } from '@/lib/db';
 
 export async function GET() {
   const db = getDb();
-  const articles = db.prepare("SELECT slug, published_at FROM articles WHERE status = 'PUBLISHED' ORDER BY published_at DESC LIMIT 100").all() as any[];
-  const categories = db.prepare('SELECT slug FROM categories').all() as any[];
+  const articles = await db.prepare("SELECT slug, published_at FROM articles WHERE status = 'PUBLISHED' ORDER BY published_at DESC LIMIT 100").all() as any[];
+  const categories = await db.prepare('SELECT slug FROM categories').all() as any[];
 
   const baseUrl = 'https://dailysignal.com';
 

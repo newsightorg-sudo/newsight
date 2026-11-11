@@ -5,7 +5,7 @@ import { slugify } from '@/lib/utils';
 import { getLiveBlogs } from '@/lib/data';
 
 export async function GET() {
-  const blogs = getLiveBlogs();
+  const blogs = await getLiveBlogs();
   return NextResponse.json({ liveBlogs: blogs });
 }
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const slug = slugify(title);
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO live_blogs (id, title, slug, summary, status, reporter_id, category_id, started_at, updated_at, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, title, slug, summary, status, reporter_id || null, category_id || null, now, now, now);

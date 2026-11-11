@@ -18,6 +18,7 @@ interface ArticleManagementViewProps {
   reporters: Reporter[];
   userRole?: UserRole;
   initialStatus?: string;
+  initialAuthor?: string;
 }
 
 export default function ArticleManagementView({
@@ -26,6 +27,7 @@ export default function ArticleManagementView({
   reporters,
   userRole,
   initialStatus = 'ALL',
+  initialAuthor = 'ALL',
 }: ArticleManagementViewProps) {
   const router = useRouter();
 
@@ -34,7 +36,7 @@ export default function ArticleManagementView({
   const [selectedStatus, setSelectedStatus] = useState<string>(initialStatus);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
-  const [authorFilter, setAuthorFilter] = useState('ALL');
+  const [authorFilter, setAuthorFilter] = useState(initialAuthor);
   const [sortOrder, setSortOrder] = useState<'NEWEST' | 'OLDEST'>('NEWEST');
 
   // Bulk selection

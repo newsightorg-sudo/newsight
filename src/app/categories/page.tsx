@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   description: 'Explore all 21 NEWSIGHT news categories, video reporting desks, and specialized coverage units.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function CategoriesDirectoryPage() {
-  const categories = getCategories();
+  const categories = await getCategories();
 
   return (
     <PublicLayout>

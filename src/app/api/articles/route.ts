@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getCurrentUser, canPublish } from '@/lib/auth';
 import { slugify, estimateReadingTime } from '@/lib/utils';
-import { getAllArticlesAdmin } from '@/lib/data';
+import { getAllArticlesAdmin, invalidateDataCache } from '@/lib/data';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const status = searchParams.get('status') || undefined;
 
-  const articles = getAllArticlesAdmin(status);
+  const articles = await getAllArticlesAdmin(status);
   return NextResponse.json({ articles });
 }
 
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     let finalSlug = baseSlug;
 
     // Ensure unique slug
-    const existing = db.prepare('SELECT id FROM articles WHERE slug = ?').get(finalSlug);
+    const existing = await db.prepare('SELECT id FROM articles WHERE slug = ?').get(finalSlug);
     if (existing) {
       finalSlug = `${baseSlug}-${Math.floor(Math.random() * 1000)}`;
     }
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     const now = new Date().toISOString();
     const publishedAt = targetStatus === 'PUBLISHED' ? now : null;
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO articles (
         id, title, slug, deck, body, featured_image, image_caption, image_credit,
         category_id, reporter_id, status, article_type, is_breaking, is_lead, is_featured,
@@ -106,6 +106,7 @@ export async function POST(req: Request) {
       now
     );
 
+    invalidateDataCache('article');
     return NextResponse.json({
       success: true,
       article: { id, slug: finalSlug, status: targetStatus },

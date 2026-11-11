@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Our transparent protocol for handling factual corrections, clarifications, and journalistic accountability.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function CorrectionsPolicyPage() {
   return (
