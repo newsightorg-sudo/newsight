@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: 'In-depth visual investigations, ground reports, explainers, and longform photojournalism stories.',
 };
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 interface VideoHubProps {
   searchParams: Promise<{ category?: string; sort?: string }>;

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: 'Meet the correspondents, investigative reporters, and editors leading NEWSIGHT’s video dispatches.',
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function ReportersDirectoryPage() {
   const reporters = await getReporters();

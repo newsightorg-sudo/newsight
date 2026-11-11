@@ -9,6 +9,8 @@ import PublicLayout from '@/components/public/PublicLayout';
 import LiveBlogStream from '@/components/public/LiveBlogStream';
 import { Radio, Calendar, User, Clock } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface LiveBlogPageProps {
   params: Promise<{ slug: string }>;
 }

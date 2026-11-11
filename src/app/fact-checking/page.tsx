@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Our systematic multi-tiered verification framework for claims, technical data, and investigative findings.',
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export default async function FactCheckingPage() {
   return (

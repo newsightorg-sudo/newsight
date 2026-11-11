@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: 'In-depth regional reporting, environmental conservation, district governance, and maritime commerce across Kerala.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function KeralaBureauPage() {
   const user = await getCurrentUser();
   const settings = await getEditorialSettings();

@@ -14,17 +14,7 @@ import {
   Clock, Eye, Film, Share2, User, ChevronRight, Newspaper, ArrowLeft
 } from 'lucide-react';
 
-export async function generateStaticParams() {
-  try {
-    const videos = await getVideos(50);
-    return videos.map((v) => ({
-      slug: v.slug,
-    }));
-  } catch (err) {
-    console.warn('generateStaticParams error in video/[slug]:', err);
-    return [];
-  }
-}
+export const dynamic = 'force-dynamic';
 
 interface VideoPageProps {
   params: Promise<{ slug: string }>;

@@ -13,19 +13,7 @@ import {
   Newspaper, ChevronRight 
 } from 'lucide-react';
 
-export const revalidate = 60;
-
-export async function generateStaticParams() {
-  try {
-    const reporters = await getReporters();
-    return reporters.map((r) => ({
-      slug: r.slug,
-    }));
-  } catch (err) {
-    console.warn('generateStaticParams error in reporters/[slug]:', err);
-    return [];
-  }
-}
+export const dynamic = 'force-dynamic';
 
 interface ReporterPageProps {
   params: Promise<{ slug: string }>;

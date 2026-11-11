@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Most-read journalistic investigations, field reports, and prime editorial stories on NEWSIGHT ranked by verified readership.',
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function TopVideosPage() {
   const topVideos = await getTopVideos(16);

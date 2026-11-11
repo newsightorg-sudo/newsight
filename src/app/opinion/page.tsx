@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: 'Rigorous commentary, philosophical essays, legal analysis, and editorial stances on governance and society.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function OpinionPage() {
   const user = await getCurrentUser();
   const settings = await getEditorialSettings();

@@ -13,19 +13,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
-export const revalidate = 60;
-
-export async function generateStaticParams() {
-  try {
-    const shows = await getShows();
-    return shows.map((show) => ({
-      slug: show.slug,
-    }));
-  } catch (err) {
-    console.warn('generateStaticParams error in shows/[slug]:', err);
-    return [];
-  }
-}
+export const dynamic = 'force-dynamic';
 
 interface ShowPageProps {
   params: Promise<{ slug: string }>;

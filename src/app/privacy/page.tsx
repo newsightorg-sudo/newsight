@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Our data protection principles, cookie practices, and reader privacy policies.',
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export default async function PrivacyPage() {
   return (

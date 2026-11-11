@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Documentary photography, coastal chronicles, cultural heritage, and ground photo essays.',
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function PhotoStoriesPage() {
   const [user, settings, categories, stories] = await Promise.all([

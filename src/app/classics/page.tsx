@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: 'Curated archival dispatches, historic Supreme Court hearings, and milestone investigative documentaries from the NEWSIGHT archives.',
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function ClassicsPage() {
   const classics = await getClassicVideos(12);

@@ -13,7 +13,7 @@ import {
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 function formatReadingTime(duration?: string) {
   if (!duration) return '5 min read';

@@ -17,19 +17,7 @@ import {
   Clock, Calendar, AlertTriangle, User, PlaySquare, ChevronRight, Share2 
 } from 'lucide-react';
 
-export const revalidate = 60;
-
-export async function generateStaticParams() {
-  try {
-    const articles = await getLatestArticles(50);
-    return articles.map((a) => ({
-      slug: a.slug,
-    }));
-  } catch (err) {
-    console.warn('generateStaticParams error in article/[slug]:', err);
-    return [];
-  }
-}
+export const dynamic = 'force-dynamic';
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;

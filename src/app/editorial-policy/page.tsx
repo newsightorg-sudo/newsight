@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'The principles governing our reporting, primary verification procedures, anonymous sourcing, and editorial independence.',
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export default async function EditorialPolicyPage() {
   return (

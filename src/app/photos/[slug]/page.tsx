@@ -8,7 +8,7 @@ import { formatDate } from '@/lib/utils';
 import PublicLayout from '@/components/public/PublicLayout';
 import { Camera, Calendar, User } from 'lucide-react';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 interface PhotoStoryPageProps {
   params: Promise<{ slug: string }>;
