@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  LayoutDashboard, FileText, CheckSquare, Radio,
+  LayoutDashboard, FileText, CheckSquare,
   Users, FolderTree, Image as ImageIcon, Mail, Settings, 
   ExternalLink, LogOut, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
@@ -63,7 +63,6 @@ export default function AdminSidebar({
       groupName: 'COMMUNITY',
       items: [
         { name: 'Subscribers', href: '/admin/subscribers', icon: Mail },
-        { name: 'Live Blogs', href: '/admin/live-blogs', icon: Radio },
       ],
     },
     {

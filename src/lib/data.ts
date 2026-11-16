@@ -930,59 +930,17 @@ export const getPhotoStoryBySlug = cache(async (slug: string): Promise<PhotoStor
   return setToCache(cacheKey, story, 60);
 });
 
-// 6. Live Blogs & Updates
+// 6. Live Blogs & Updates (Retired)
 export async function getLiveBlogs(): Promise<LiveBlog[]> {
-  const db = getDb();
-  const rows = await db.prepare(`
-    SELECT 
-      lb.*,
-      r.name as reporter_name,
-      r.avatar_url as reporter_avatar,
-      c.name as category_name
-    FROM live_blogs lb
-    LEFT JOIN reporters r ON lb.reporter_id = r.id
-    LEFT JOIN categories c ON lb.category_id = c.id
-    ORDER BY lb.updated_at DESC
-  `).all<LiveBlog>();
-  return toPlain(rows);
+  return [];
 }
 
-export async function getLiveBlogBySlug(slug: string): Promise<LiveBlog | null> {
-  const db = getDb();
-  const rawBlog = await db.prepare(`
-    SELECT 
-      lb.*,
-      r.name as reporter_name,
-      r.avatar_url as reporter_avatar,
-      c.name as category_name
-    FROM live_blogs lb
-    LEFT JOIN reporters r ON lb.reporter_id = r.id
-    LEFT JOIN categories c ON lb.category_id = c.id
-    WHERE lb.slug = ?
-  `).get<LiveBlog>(slug);
-
-  if (!rawBlog) return null;
-
-  const blog = toPlain(rawBlog);
-
-  const updates = await db.prepare(`
-    SELECT * FROM live_updates 
-    WHERE live_blog_id = ? 
-    ORDER BY created_at DESC
-  `).all<LiveUpdate>(blog.id);
-
-  blog.updates = toPlain(updates);
-  return blog;
+export async function getLiveBlogBySlug(_slug: string): Promise<LiveBlog | null> {
+  return null;
 }
 
-export async function getLiveUpdates(liveBlogId: string, limit = 50): Promise<LiveUpdate[]> {
-  const db = getDb();
-  const rows = await db.prepare(`
-    SELECT * FROM live_updates 
-    WHERE live_blog_id = ? 
-    ORDER BY created_at DESC LIMIT ?
-  `).all<LiveUpdate>(liveBlogId, limit);
-  return toPlain(rows);
+export async function getLiveUpdates(_liveBlogId: string, _limit = 50): Promise<LiveUpdate[]> {
+  return [];
 }
 
 // 7. Reporters
@@ -1110,7 +1068,6 @@ export async function getEditorialStats() {
     articleCounts,
     totalReportersRow,
     totalVideosRow,
-    totalLiveBlogsRow,
     subscribersRow
   ] = await Promise.all([
     db.prepare(`
@@ -1123,7 +1080,6 @@ export async function getEditorialStats() {
     `).get<{ published: number, in_review: number, drafts: number, scheduled: number }>(),
     db.prepare("SELECT COUNT(*) as count FROM reporters WHERE is_active = 1").get<{ count: string | number }>(),
     db.prepare("SELECT COUNT(*) as count FROM videos").get<{ count: string | number }>(),
-    db.prepare("SELECT COUNT(*) as count FROM live_blogs WHERE status = 'ACTIVE'").get<{ count: string | number }>(),
     db.prepare("SELECT COUNT(*) as count FROM newsletter_subscribers WHERE is_active = 1").get<{ count: string | number }>()
   ]);
 
@@ -1134,7 +1090,7 @@ export async function getEditorialStats() {
     scheduled: Number(articleCounts?.scheduled || 0),
     totalReporters: Number(totalReportersRow?.count || 0),
     totalVideos: Number(totalVideosRow?.count || 0),
-    totalLiveBlogs: Number(totalLiveBlogsRow?.count || 0),
+    totalLiveBlogs: 0,
     subscribers: Number(subscribersRow?.count || 0)
   };
 }

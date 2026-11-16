@@ -63,8 +63,6 @@ export default function AdminTopHeader({
     } else if (pathname.startsWith('/admin/media')) {
       crumbs.push({ label: 'Media Library', href: '/admin/media' });
 
-    } else if (pathname.startsWith('/admin/live-blogs')) {
-      crumbs.push({ label: 'Live Coverage', href: '/admin/live-blogs' });
     } else if (pathname.startsWith('/admin/subscribers')) {
       crumbs.push({ label: 'Subscribers', href: '/admin/subscribers' });
     } else if (pathname.startsWith('/admin/settings')) {

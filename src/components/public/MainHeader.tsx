@@ -73,14 +73,6 @@ export default function MainHeader({
           {/* Right: Quick actions & mobile toggle */}
           <div className="flex items-center justify-end space-x-3">
             <Link
-              href="/live"
-              className="hidden lg:inline-flex items-center space-x-1.5 px-2.5 py-1 text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition"
-            >
-              <span className="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
-              <span>LIVE BLOGS</span>
-            </Link>
-
-            <Link
               href="/search"
               aria-label="Search articles"
               className="p-1.5 text-zinc-600 hover:text-zinc-900 transition"
