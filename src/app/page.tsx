@@ -84,11 +84,17 @@ export default async function HomePage() {
                     >
                       <div className="space-y-2.5">
                         <div className="relative aspect-video rounded-lg overflow-hidden bg-black/50 border border-[#252D39]/60">
-                          <img
-                            src={art.featured_image}
-                            alt={art.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+                          {art.featured_image ? (
+                            <img
+                              src={art.featured_image}
+                              alt={art.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-[#151D2A] text-[#707B8B]">
+                              <Newspaper className="w-6 h-6 text-[#252D39]" />
+                            </div>
+                          )}
                           <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/85 text-[10px] font-mono font-bold text-white rounded">
                             {art.reading_time_minutes || 5} MIN READ
                           </span>
@@ -161,11 +167,17 @@ export default async function HomePage() {
                     >
                       <div className="space-y-2.5">
                         <div className="relative aspect-video rounded-lg overflow-hidden bg-black/50 border border-[#252D39]/60">
-                          <img
-                            src={art.featured_image}
-                            alt={art.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+                          {art.featured_image ? (
+                            <img
+                              src={art.featured_image}
+                              alt={art.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-[#151D2A] text-[#707B8B]">
+                              <Newspaper className="w-6 h-6 text-[#252D39]" />
+                            </div>
+                          )}
                           <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/85 text-[10px] font-mono font-bold text-white rounded">
                             {art.reading_time_minutes || 5} MIN READ
                           </span>
@@ -234,11 +246,17 @@ export default async function HomePage() {
                       className="group flex flex-col rounded-xl bg-[#121925] hover:bg-[#1B2432] border border-[#252D39] overflow-hidden transition-all shadow-sm"
                     >
                       <div className="relative aspect-[16/10] bg-black overflow-hidden">
-                        <img
-                          src={art.featured_image}
-                          alt={art.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                        {art.featured_image ? (
+                          <img
+                            src={art.featured_image}
+                            alt={art.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-[#151D2A] text-[#707B8B]">
+                            <Newspaper className="w-6 h-6 text-[#252D39]" />
+                          </div>
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                         <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-white">
                           <span className="text-[10px] font-bold uppercase tracking-wider bg-black/60 px-2 py-0.5 rounded border border-white/10">
@@ -305,11 +323,17 @@ export default async function HomePage() {
                     >
                       <div className="space-y-2.5">
                         <div className="relative aspect-video rounded-lg overflow-hidden bg-black/50 border border-[#252D39]/60">
-                          <img
-                            src={art.featured_image}
-                            alt={art.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+                          {art.featured_image ? (
+                            <img
+                              src={art.featured_image}
+                              alt={art.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-[#151D2A] text-[#707B8B]">
+                              <Newspaper className="w-6 h-6 text-[#252D39]" />
+                            </div>
+                          )}
                           <span className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/85 text-amber-400 border border-amber-400/30 flex items-center justify-center text-xs font-black font-mono shadow-md">
                             #{idx + 1}
                           </span>
@@ -382,11 +406,17 @@ export default async function HomePage() {
                         className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-[#121925] hover:bg-[#1B2432] border border-[#252D39] transition-all group"
                       >
                         <div className="relative w-full sm:w-48 aspect-video sm:aspect-[4/3] shrink-0 bg-black rounded-lg overflow-hidden border border-[#252D39]/50">
-                          <img
-                            src={art.featured_image}
-                            alt={art.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+                          {art.featured_image ? (
+                            <img
+                              src={art.featured_image}
+                              alt={art.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-[#151D2A] text-[#707B8B]">
+                              <Newspaper className="w-6 h-6 text-[#252D39]" />
+                            </div>
+                          )}
                           {art.category_name && (
                             <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-black/80 text-[9px] font-bold text-white uppercase rounded">
                               {art.category_name}

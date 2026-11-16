@@ -66,13 +66,22 @@ export default function VisualDispatchHero({ article }: VisualDispatchHeroProps)
       {/* High-Impact Visual Photo Dispatch Frame */}
       <div 
         className="relative w-full aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden border border-[#252D39] shadow-2xl group cursor-pointer"
-        onClick={() => setIsLightboxOpen(true)}
+        onClick={() => {
+          if (article.featured_image) setIsLightboxOpen(true);
+        }}
       >
-        <img
-          src={article.featured_image}
-          alt={article.title}
-          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
-        />
+        {article.featured_image ? (
+          <img
+            src={article.featured_image}
+            alt={article.title}
+            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#121925] to-[#1A2536] text-[#707B8B] p-6 text-center">
+            <Camera className="w-12 h-12 text-[#252D39] mb-2" />
+            <span className="text-xs uppercase font-mono tracking-widest text-[#707B8B]">Newsight Visual Dispatch</span>
+          </div>
+        )}
 
         {/* Top-Left Category / Field Photography Badge */}
         <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-md border border-white/10 flex items-center gap-1.5 text-white text-[11px] font-bold uppercase tracking-wider shadow-lg">
@@ -81,13 +90,15 @@ export default function VisualDispatchHero({ article }: VisualDispatchHeroProps)
         </div>
 
         {/* Bottom-Right Enlarge Trigger */}
-        <div 
-          className="absolute bottom-3 right-3 p-2 rounded-lg bg-black/85 backdrop-blur-md text-white border border-white/10 group-hover:bg-[#E50914] transition-colors shadow-lg flex items-center gap-1.5 text-xs font-semibold"
-          title="Click to enlarge photograph"
-        >
-          <Maximize2 className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Enlarge Photo</span>
-        </div>
+        {article.featured_image && (
+          <div 
+            className="absolute bottom-3 right-3 p-2 rounded-lg bg-black/85 backdrop-blur-md text-white border border-white/10 group-hover:bg-[#E50914] transition-colors shadow-lg flex items-center gap-1.5 text-xs font-semibold"
+            title="Click to enlarge photograph"
+          >
+            <Maximize2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Enlarge Photo</span>
+          </div>
+        )}
 
         {/* Bottom Title Gradient Strip */}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-4 sm:p-5 pt-8 text-white pointer-events-none">

@@ -163,23 +163,25 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         {/* Featured Image */}
-        <figure className="rounded-xl overflow-hidden border border-[#252D39] bg-black">
-          <div className="relative aspect-[16/9] w-full">
-            <img
-              src={article.featured_image}
-              alt={article.image_caption || article.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {(article.image_caption || article.image_credit) && (
-            <figcaption className="p-3 bg-[#0E131C] text-xs text-[#707B8B] flex flex-col sm:flex-row justify-between gap-1">
-              <span>{article.image_caption}</span>
-              {article.image_credit && (
-                <span className="font-semibold text-[#A4ADBB] shrink-0">Photo: {article.image_credit}</span>
-              )}
-            </figcaption>
-          )}
-        </figure>
+        {article.featured_image && (
+          <figure className="rounded-xl overflow-hidden border border-[#252D39] bg-black">
+            <div className="relative aspect-[16/9] w-full">
+              <img
+                src={article.featured_image}
+                alt={article.image_caption || article.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {(article.image_caption || article.image_credit) && (
+              <figcaption className="p-3 bg-[#0E131C] text-xs text-[#707B8B] flex flex-col sm:flex-row justify-between gap-1">
+                <span>{article.image_caption}</span>
+                {article.image_credit && (
+                  <span className="font-semibold text-[#A4ADBB] shrink-0">Photo: {article.image_credit}</span>
+                )}
+              </figcaption>
+            )}
+          </figure>
+        )}
 
         {/* Correction Notice Alert if applicable */}
         {article.correction_notice && (

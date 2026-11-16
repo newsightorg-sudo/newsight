@@ -135,7 +135,7 @@ export async function PUT(req: Request, { params }: Params) {
       content || existing.body,
       targetCategoryId,
       reporter_id || existing.reporter_id,
-      featured_image || existing.featured_image,
+      featured_image !== undefined ? (featured_image?.trim() || '') : (existing.featured_image || ''),
       image_caption !== undefined ? image_caption : existing.image_caption,
       image_credit !== undefined ? image_credit : existing.image_credit,
       article_type || existing.article_type,

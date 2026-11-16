@@ -54,15 +54,66 @@ export default function ArticleForm({
 
   const canApproveAndPublish = userRole === 'SUPER_ADMIN' || userRole === 'EDITOR' || userRole === 'REPORTER';
 
+  // Client-side image compression to prevent raw camera uploads from exceeding serverless request limits
+  async function compressImageIfNeeded(file: File, maxDim = 1600, quality = 0.85): Promise<File | Blob> {
+    if (file.size < 400 * 1024) return file;
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(file);
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob && blob.size < file.size) {
+              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+            } else {
+              resolve(file);
+            }
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = url;
+    });
+  }
+
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Immediately display instant client preview
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (ev.target?.result) {
+        setFeaturedImage(ev.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+
     setUploadingImage(true);
     setError('');
     try {
+      const optimized = await compressImageIfNeeded(file);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', optimized, file.name);
       formData.append('caption', imageCaption);
       formData.append('credit', imageCredit);
 
@@ -76,10 +127,11 @@ export default function ArticleForm({
         setFeaturedImage(data.asset.url);
         setSuccess('Image uploaded and set as featured photograph.');
       } else {
-        setError(data.error || 'Failed to upload image.');
+        // If server upload returned an error, keep local preview so user doesn't lose image
+        setError(data.error || 'Server upload warning; local preview retained.');
       }
     } catch (err) {
-      setError('Image upload failed.');
+      setError('Image upload failed to complete; local preview retained.');
     } finally {
       setUploadingImage(false);
     }
@@ -543,8 +595,16 @@ export default function ArticleForm({
             </h3>
 
             {featuredImage ? (
-              <div className="aspect-[16/10] w-full overflow-hidden bg-white dark:bg-[#0D1626] border border-[#DCE7F2] dark:border-[#27364B] rounded-lg mb-2">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-white dark:bg-[#0D1626] border border-[#DCE7F2] dark:border-[#27364B] rounded-lg mb-2 group">
                 <img src={featuredImage} alt="Featured Preview" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setFeaturedImage('')}
+                  className="absolute top-2 right-2 px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-[10px] font-bold shadow-md cursor-pointer transition"
+                  title="Remove image"
+                >
+                  Remove
+                </button>
               </div>
             ) : (
               <div className="aspect-[16/10] w-full bg-white dark:bg-[#0D1626] border border-dashed border-[#DCE7F2] dark:border-[#27364B] rounded-lg flex flex-col items-center justify-center text-[#7890A8] gap-1">

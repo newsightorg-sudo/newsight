@@ -4,6 +4,9 @@ import { getCurrentUser } from '@/lib/auth';
 import path from 'path';
 import fs from 'fs';
 
+export const runtime = 'nodejs';
+export const maxDuration = 30;
+
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
@@ -23,45 +26,56 @@ export async function POST(req: Request) {
 
     // Allowed image formats
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: 'Invalid file format. Only JPEG, PNG, WebP, and AVIF are permitted.' }, { status: 400 });
+    const mimeType = file.type || 'image/jpeg';
+    if (!allowedTypes.includes(mimeType)) {
+      return NextResponse.json(
+        { error: 'Invalid file format. Only JPEG, PNG, WebP, AVIF and GIF are permitted.' },
+        { status: 400 }
+      );
     }
 
-    // Max 10MB
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size exceeds 10MB limit.' }, { status: 400 });
-    }
-
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
+    // Max 15MB
+    if (file.size > 15 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File size exceeds 15MB limit.' }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64Data = buffer.toString('base64');
+    const dataUrl = `data:${mimeType};base64,${base64Data}`;
 
-    const ext = path.extname(file.name) || '.jpg';
-    const cleanName = `${Date.now()}-${Math.floor(Math.random() * 10000)}${ext}`;
-    const filePath = path.join(uploadsDir, cleanName);
-
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/uploads/${cleanName}`;
-    const db = getDb();
-    const assetId = `med-${Date.now()}`;
+    const assetId = `med-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     const now = new Date().toISOString();
 
+    // Optionally cache to disk if filesystem is writable (e.g. local development)
+    try {
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      const ext = path.extname(file.name) || (mimeType === 'image/png' ? '.png' : '.jpg');
+      const cleanName = `${Date.now()}-${Math.floor(Math.random() * 10000)}${ext}`;
+      const filePath = path.join(uploadsDir, cleanName);
+      fs.writeFileSync(filePath, buffer);
+    } catch (_fsError) {
+      // Safe to ignore on serverless platforms (Vercel) with read-only file systems
+    }
+
+    // Always persist to database in media_assets table
+    const db = getDb();
     await db.prepare(`
       INSERT INTO media_assets (id, filename, url, alt_text, caption, credit, file_type, file_size, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(assetId, file.name, publicUrl, altText, caption, credit, file.type, file.size, now);
+    `).run(assetId, file.name || 'image.jpg', dataUrl, altText, caption, credit, mimeType, file.size, now);
+
+    const publicUrl = `/api/media/${assetId}`;
 
     return NextResponse.json({
       success: true,
       asset: {
         id: assetId,
         url: publicUrl,
-        filename: file.name,
+        filename: file.name || 'image.jpg',
         alt_text: altText,
         caption,
         credit,
@@ -73,7 +87,18 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const db = getDb();
-  const assets = await db.prepare('SELECT * FROM media_assets ORDER BY created_at DESC LIMIT 50').all();
-  return NextResponse.json({ assets });
+  try {
+    const db = getDb();
+    const assets = await db.prepare('SELECT id, filename, url, alt_text, caption, credit, file_type, file_size, created_at FROM media_assets ORDER BY created_at DESC LIMIT 60').all();
+
+    // Transform assets so that for catalog display, the URL is `/api/media/[id]` if it was stored as dataUrl
+    const formatted = (assets || []).map((a: any) => ({
+      ...a,
+      url: a.url && a.url.startsWith('data:') ? `/api/media/${a.id}` : (a.url || `/api/media/${a.id}`),
+    }));
+
+    return NextResponse.json({ assets: formatted });
+  } catch (error: any) {
+    return NextResponse.json({ assets: [] });
+  }
 }

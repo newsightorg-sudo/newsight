@@ -92,7 +92,7 @@ export async function POST(req: Request, context: RouteContext) {
       slug,
       deck.trim(),
       content,
-      featured_image || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1200&q=80',
+      featured_image?.trim() || '',
       image_caption || null,
       image_credit || null,
       category_id,

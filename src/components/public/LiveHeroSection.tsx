@@ -210,11 +210,17 @@ export default function LiveHeroSection({
                     className="flex gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-xl bg-[#121925] hover:bg-[#1B2432] border border-[#252D39] transition-all group"
                   >
                     <div className="relative w-36 sm:w-44 aspect-video shrink-0 bg-black rounded-lg overflow-hidden border border-[#252D39]/50">
-                      <img
-                        src={art.featured_image}
-                        alt={art.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                      {art.featured_image ? (
+                        <img
+                          src={art.featured_image}
+                          alt={art.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-[#151D2A] text-[#707B8B]">
+                          <Newspaper className="w-6 h-6 text-[#252D39]" />
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-black/25 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="w-8 h-8 rounded-full bg-[#E50914] text-white flex items-center justify-center shadow-lg">
                           <ArrowUpRight className="w-4 h-4 text-white" />
