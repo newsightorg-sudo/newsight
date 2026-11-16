@@ -206,11 +206,12 @@ export default function NewsightHeader({
   };
 
   const handleLogout = async () => {
+    setCurrentUser(null);
+    setIsProfileOpen(false);
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      router.push('/');
-      router.refresh();
     } catch (_) {}
+    window.location.href = '/';
   };
 
   // Curate Primary Desk Navigation Links (strictly only categories that have published articles)
@@ -228,6 +229,7 @@ export default function NewsightHeader({
         categories={categories}
         shows={shows}
         user={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* Permanent Sticky 2-Tier Header - Stays pinned when scrolling */}

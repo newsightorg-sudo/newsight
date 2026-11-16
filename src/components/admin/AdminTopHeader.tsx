@@ -140,7 +140,9 @@ export default function AdminTopHeader({
   }, [searchQuery]);
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (_) {}
     window.location.href = '/admin/login';
   }
 

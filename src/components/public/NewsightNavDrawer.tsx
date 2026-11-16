@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import {
   X, Search, Home, LayoutGrid, Award, TrendingUp,
   FileText, ShieldCheck, Mail, ExternalLink, ChevronRight, User,
-  Camera, Newspaper, Sparkles
+  Camera, Newspaper, Sparkles, LogOut
 } from 'lucide-react';
 import NewsightLogo from './NewsightLogo';
 import ThemeToggle from './ThemeToggle';
@@ -19,6 +19,7 @@ interface NavDrawerProps {
   categories: { id: string; name: string; slug: string }[];
   shows: { id: string; title: string; slug: string }[];
   user?: any;
+  onLogout?: () => void;
 }
 
 export default function NewsightNavDrawer({
@@ -26,7 +27,8 @@ export default function NewsightNavDrawer({
   onClose,
   categories = [],
   shows = [],
-  user
+  user,
+  onLogout
 }: NavDrawerProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -315,22 +317,42 @@ export default function NewsightNavDrawer({
             }`}>
             {user ? (
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#1261A6] text-white flex items-center justify-center text-xs font-bold">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-[#1261A6] text-white flex items-center justify-center text-xs font-bold shrink-0">
                     {user.name?.charAt(0) || 'U'}
                   </div>
-                  <div>
-                    <div className="font-bold">{user.name}</div>
+                  <div className="min-w-0">
+                    <div className="font-bold truncate">{user.name}</div>
                     <div className="text-[10px] text-[#71869C]">{user.role}</div>
                   </div>
                 </div>
-                <Link
-                  href="/admin"
-                  onClick={onClose}
-                  className="px-3.5 py-1.5 bg-[#079FE3] hover:bg-[#1261A6] text-white text-xs font-bold rounded-lg transition shadow-xs"
-                >
-                  Admin CMS
-                </Link>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    href="/admin"
+                    onClick={onClose}
+                    className="px-3 py-1.5 bg-[#079FE3] hover:bg-[#1261A6] text-white text-xs font-bold rounded-lg transition shadow-xs"
+                  >
+                    Admin CMS
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      onClose();
+                      if (onLogout) {
+                        onLogout();
+                      } else {
+                        try {
+                          await fetch('/api/auth/logout', { method: 'POST' });
+                        } catch (_) {}
+                        window.location.href = '/';
+                      }
+                    }}
+                    className="p-1.5 rounded-lg text-[#71869C] hover:text-[#D71920] hover:bg-red-50 dark:hover:bg-red-950/30 transition cursor-pointer"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="flex items-center justify-between gap-3">
