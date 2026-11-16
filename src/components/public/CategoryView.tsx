@@ -1,24 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { PlaySquare, Newspaper, ChevronRight } from 'lucide-react';
-import VideoCard from '@/components/public/VideoCard';
+import { Newspaper, ChevronRight } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
-import { Article, VideoItem, Category } from '@/lib/types';
+import { Article, Category } from '@/lib/types';
 
 interface CategoryViewProps {
   category: Category;
   articles: Article[];
-  videos: VideoItem[];
+  videos?: any[];
 }
 
-export default function CategoryView({ category, articles, videos }: CategoryViewProps) {
-  const [activeTab, setActiveTab] = useState<'all' | 'videos' | 'articles'>('all');
-
-  const showVideos = activeTab === 'all' || activeTab === 'videos';
-  const showArticles = activeTab === 'all' || activeTab === 'articles';
-
+export default function CategoryView({ category, articles }: CategoryViewProps) {
   return (
     <div className="px-3 sm:px-6 lg:px-8 py-6 space-y-8">
       {/* Masthead */}
@@ -38,77 +32,25 @@ export default function CategoryView({ category, articles, videos }: CategoryVie
         </h1>
 
         <p className="text-xs sm:text-sm text-[#A4ADBB] max-w-2xl leading-relaxed">
-          {category.description || `Comprehensive continuous journalism, video investigations, and dispatches in ${category.name}.`}
+          {category.description || `Comprehensive continuous journalism, field reporting, and editorial dispatches in ${category.name}.`}
         </p>
 
-        {/* Instant Client-Side Filter Tabs */}
         <div className="pt-2 flex items-center gap-2 text-xs">
-          <button
-            type="button"
-            onClick={() => setActiveTab('all')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-              activeTab === 'all' 
-                ? 'bg-[#075DEB] text-white shadow-xs' 
-                : 'bg-[#121925] text-[#A4ADBB] hover:text-white border border-[#252D39]'
-            }`}
-          >
-            All Coverage ({videos.length + articles.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('videos')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'videos' 
-                ? 'bg-[#075DEB] text-white shadow-xs' 
-                : 'bg-[#121925] text-[#A4ADBB] hover:text-white border border-[#252D39]'
-            }`}
-          >
-            <PlaySquare className="w-3.5 h-3.5" />
-            <span>Video Reports ({videos.length})</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('articles')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'articles' 
-                ? 'bg-[#075DEB] text-white shadow-xs' 
-                : 'bg-[#121925] text-[#A4ADBB] hover:text-white border border-[#252D39]'
-            }`}
-          >
-            <Newspaper className="w-3.5 h-3.5" />
-            <span>Articles ({articles.length})</span>
-          </button>
+          <span className="px-3 py-1.5 rounded-lg font-bold bg-[#121925] text-[#A4ADBB] border border-[#252D39] flex items-center gap-1.5 font-mono">
+            <Newspaper className="w-3.5 h-3.5 text-[#075DEB]" />
+            <span>{articles.length} Stories & Articles</span>
+          </span>
         </div>
       </div>
 
-      {/* Video Reports Section */}
-      {showVideos && videos.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-[#252D39] pb-2">
-            <div className="flex items-center gap-2">
-              <PlaySquare className="w-4 h-4 text-[#E50914]" />
-              <h2 className="text-sm font-black uppercase tracking-wider text-white">
-                Video Dispatches in {category.name}
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {videos.map((vid) => (
-              <VideoCard key={vid.id} video={vid} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Written Articles Section */}
-      {showArticles && articles.length > 0 && (
+      {/* Articles Section */}
+      {articles.length > 0 ? (
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between border-b border-[#252D39] pb-2">
             <div className="flex items-center gap-2">
               <Newspaper className="w-4 h-4 text-[#075DEB]" />
               <h2 className="text-sm font-black uppercase tracking-wider text-white">
-                Written Articles & In-Depth Reports
+                Reports & Articles
               </h2>
             </div>
           </div>
@@ -150,12 +92,9 @@ export default function CategoryView({ category, articles, videos }: CategoryVie
             ))}
           </div>
         </div>
-      )}
-
-      {/* Empty State */}
-      {videos.length === 0 && articles.length === 0 && (
+      ) : (
         <div className="p-12 text-center rounded-2xl bg-[#121925] border border-[#252D39]">
-          <p className="text-sm text-[#A4ADBB]">No stories or video reports currently filed under this desk.</p>
+          <p className="text-sm text-[#A4ADBB]">No stories currently filed under this desk.</p>
           <Link href="/" prefetch={true} className="mt-4 inline-block px-4 py-2 bg-[#075DEB] text-white text-xs font-bold rounded-lg">
             Return Home
           </Link>

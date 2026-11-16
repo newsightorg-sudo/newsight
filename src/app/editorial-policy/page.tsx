@@ -47,12 +47,12 @@ export default async function EditorialPolicyPage() {
 
           <h2>3. Separation of News and Opinion</h2>
           <p>
-            NEWSIGHT maintains an uncompromised firewall between news reporting and commentary. Video dispatches, news articles, and ground reports report observed facts objectively. Columns, essays, and editorial debates are distinctly labeled as <strong>OPINION</strong> to avoid audience confusion.
+            NEWSIGHT maintains an uncompromised firewall between news reporting and commentary. Photographic dispatches, news articles, and ground reports report observed facts objectively. Columns, essays, and editorial commentaries are distinctly labeled as <strong>OPINION</strong> to avoid audience confusion.
           </p>
 
-          <h2>4. Video Journalism Integrity</h2>
+          <h2>4. Field & Visual Journalism Integrity</h2>
           <p>
-            Video footage broadcast on NEWSIGHT is authentic. We do not stage news events, reenact factual scenarios without clear labeling, or digitally manipulate audio/visual telemetry to mislead viewers. Deepfakes and unverified viral clips are rigorously fact-checked before broadcast.
+            Photography and imagery published on NEWSIGHT are authentic. We do not stage news events, reenact factual scenarios without clear labeling, or digitally manipulate photographic telemetry to mislead readers. Unverified viral media is rigorously fact-checked before publication.
           </p>
 
           <h2>5. Right to Respond</h2>

@@ -62,10 +62,7 @@ export default function AdminTopHeader({
       crumbs.push({ label: 'Desks & Categories', href: '/admin/categories' });
     } else if (pathname.startsWith('/admin/media')) {
       crumbs.push({ label: 'Media Library', href: '/admin/media' });
-    } else if (pathname.startsWith('/admin/videos')) {
-      crumbs.push({ label: 'Video Journalism', href: '/admin/videos' });
-    } else if (pathname.startsWith('/admin/shows')) {
-      crumbs.push({ label: 'Shows & Programs', href: '/admin/shows' });
+
     } else if (pathname.startsWith('/admin/live-blogs')) {
       crumbs.push({ label: 'Live Coverage', href: '/admin/live-blogs' });
     } else if (pathname.startsWith('/admin/subscribers')) {

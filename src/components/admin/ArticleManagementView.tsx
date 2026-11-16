@@ -583,9 +583,24 @@ export default function ArticleManagementView({
                               LEAD
                             </span>
                           )}
+                          {(art.article_type === 'GROUND_REPORT' || art.category_slug === 'field-reports') && (
+                            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-rose-50 text-[#E50914] border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800">
+                              FIELD REPORT
+                            </span>
+                          )}
+                          {(art.article_type === 'RECENT_DISPATCH' || art.category_slug === 'recent-dispatches') && (
+                            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-sky-50 text-[#079FE3] border border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800">
+                              RECENT DISPATCH
+                            </span>
+                          )}
+                          {(art.article_type === 'INVESTIGATION' || art.category_slug === 'investigations') && (
+                            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-indigo-50 text-[#075DEB] border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800">
+                              INVESTIGATION
+                            </span>
+                          )}
                           {art.is_featured === 1 && (
                             <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-[#E5F2FC] text-[#087FC1] border border-[#DCE7F2] dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800">
-                              FEATURED
+                              TOP STORY
                             </span>
                           )}
                           {art.is_opinion === 1 && (
@@ -593,7 +608,7 @@ export default function ArticleManagementView({
                               OPINION
                             </span>
                           )}
-                          {art.is_breaking !== 1 && art.is_lead !== 1 && art.is_featured !== 1 && art.is_opinion !== 1 && (
+                          {art.is_breaking !== 1 && art.is_lead !== 1 && art.is_featured !== 1 && art.is_opinion !== 1 && art.article_type !== 'GROUND_REPORT' && art.article_type !== 'RECENT_DISPATCH' && art.article_type !== 'INVESTIGATION' && (
                             <span className="text-[10px] text-[#71869C] font-mono">—</span>
                           )}
                         </div>

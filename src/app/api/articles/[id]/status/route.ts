@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getDb } from '@/lib/db';
 import { getCurrentUser, canPublish } from '@/lib/auth';
 import { invalidateDataCache } from '@/lib/data';
@@ -45,6 +46,8 @@ export async function POST(req: Request, { params }: Params) {
 
     await db.prepare(updateQuery).run(...queryParams);
     invalidateDataCache('article');
+    invalidateDataCache('categories');
+    revalidatePath('/', 'layout');
 
     return NextResponse.json({
       success: true,

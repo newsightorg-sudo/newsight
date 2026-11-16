@@ -49,7 +49,7 @@ export default function NewsletterBlock() {
           NEWSIGHT Morning Dispatch
         </h3>
         <p className="mt-2 text-sm text-[#A4ADBB] max-w-lg mx-auto font-sans leading-relaxed">
-          Delivering independent video journalism, investigative reports, and verified daily headlines straight to your inbox every morning at 06:00 IST.
+          Delivering independent investigative journalism, in-depth reports, and verified daily headlines straight to your inbox every morning at 06:00 IST.
         </p>
 
         {status === 'success' ? (

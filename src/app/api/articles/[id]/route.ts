@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getDb } from '@/lib/db';
 import { getCurrentUser, canPublish, canEditAnyArticle } from '@/lib/auth';
 import { estimateReadingTime } from '@/lib/utils';
@@ -69,6 +70,42 @@ export async function PUT(req: Request, { params }: Params) {
 
     const readingTime = content ? estimateReadingTime(content) : existing.reading_time_minutes;
 
+    // Ensure special categories exist if selected
+    let targetCategoryId = category_id || existing.category_id;
+    try {
+      if (category_id === 'cat-field-reports' || category_id === 'field-reports') {
+        const cat = await db.prepare('SELECT id FROM categories WHERE id = ? OR slug = ?').get('cat-field-reports', 'field-reports');
+        if (!cat) {
+          await db.prepare(`
+            INSERT INTO categories (id, name, slug, description, color, order_index, show_in_nav, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run('cat-field-reports', 'Latest Field Reports & Stories', 'field-reports', 'On-the-ground visual dispatches and field reporting.', '#E50914', 2, 1, new Date().toISOString());
+        } else {
+          targetCategoryId = (cat as any).id;
+        }
+      } else if (category_id === 'cat-recent-dispatches' || category_id === 'recent-dispatches') {
+        const cat = await db.prepare('SELECT id FROM categories WHERE id = ? OR slug = ?').get('cat-recent-dispatches', 'recent-dispatches');
+        if (!cat) {
+          await db.prepare(`
+            INSERT INTO categories (id, name, slug, description, color, order_index, show_in_nav, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run('cat-recent-dispatches', 'Recent Dispatches & Articles', 'recent-dispatches', 'Latest dispatches, ground updates, and breaking articles.', '#079FE3', 3, 1, new Date().toISOString());
+        } else {
+          targetCategoryId = (cat as any).id;
+        }
+      } else if (category_id === 'cat-investigations' || category_id === 'investigations') {
+        const cat = await db.prepare('SELECT id FROM categories WHERE id = ? OR slug = ?').get('cat-investigations', 'investigations');
+        if (!cat) {
+          await db.prepare(`
+            INSERT INTO categories (id, name, slug, description, color, order_index, show_in_nav, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run('cat-investigations', 'Special Investigations & Ground Desks', 'investigations', 'In-depth investigative reports and public interest investigations.', '#075DEB', 4, 1, new Date().toISOString());
+        } else {
+          targetCategoryId = (cat as any).id;
+        }
+      }
+    } catch (_) {}
+
     await db.prepare(`
       UPDATE articles SET
         title = ?,
@@ -96,7 +133,7 @@ export async function PUT(req: Request, { params }: Params) {
       title || existing.title,
       deck || existing.deck,
       content || existing.body,
-      category_id || existing.category_id,
+      targetCategoryId,
       reporter_id || existing.reporter_id,
       featured_image || existing.featured_image,
       image_caption !== undefined ? image_caption : existing.image_caption,
@@ -117,6 +154,8 @@ export async function PUT(req: Request, { params }: Params) {
     );
 
     invalidateDataCache('article');
+    invalidateDataCache('categories');
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, message: 'Article updated successfully.' });
   } catch (error: any) {
     return NextResponse.json(
@@ -138,6 +177,8 @@ export async function DELETE(req: Request, { params }: Params) {
     await db.prepare('DELETE FROM articles WHERE id = ?').run(id);
 
     invalidateDataCache('article');
+    invalidateDataCache('categories');
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, message: 'Article deleted successfully.' });
   } catch (error: any) {
     return NextResponse.json(

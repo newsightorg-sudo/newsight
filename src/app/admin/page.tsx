@@ -74,13 +74,13 @@ export default async function AdminDashboardPage() {
       href: '/admin/reporters',
     },
     {
-      title: 'Published Shows & Video',
-      value: stats.totalVideos + shows.length,
-      description: 'Broadcast documentaries & reports',
-      icon: Video,
-      iconColor: 'text-[#079FE3]',
-      iconBg: 'bg-sky-50 dark:bg-sky-950/40',
-      href: '/admin/videos',
+      title: 'Editorial Desks',
+      value: categories.length,
+      description: 'Active newsroom desks',
+      icon: FolderTree,
+      iconColor: 'text-[#1261A6]',
+      iconBg: 'bg-blue-50 dark:bg-blue-950/40',
+      href: '/admin/categories',
     },
     {
       title: 'Total Subscribers',
@@ -169,11 +169,11 @@ export default async function AdminDashboardPage() {
             <span>Manage Categories</span>
           </Link>
           <Link
-            href="/admin/videos"
+            href="/admin/review-queue"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F0F7FD] dark:bg-[#0D1626] text-[#174A7E] dark:text-[#B6C3D4] hover:bg-[#E3F0FC] dark:hover:bg-[#1A2942] hover:text-[#079FE3] border border-[#DCE7F2] dark:border-[#27364B] transition whitespace-nowrap"
           >
-            <Video className="w-3.5 h-3.5 text-[#079FE3]" />
-            <span>Video Journalism</span>
+            <CheckSquare className="w-3.5 h-3.5 text-[#079FE3]" />
+            <span>Review Queue</span>
           </Link>
         </div>
       </div>

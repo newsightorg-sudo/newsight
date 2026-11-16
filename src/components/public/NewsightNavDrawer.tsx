@@ -84,8 +84,6 @@ export default function NewsightNavDrawer({
 
   const primaryNav = [
     { label: 'Home Page', href: '/', icon: Home },
-    { label: 'Video Reports', href: '/video', icon: PlaySquare },
-    { label: 'Original Shows', href: '/shows', icon: Film, badge: 'Programs' },
     { label: 'Live Coverage', href: '/live', icon: Radio, badge: 'Live', badgeColor: 'bg-[#D71920]' },
     { label: 'Photo Stories', href: '/photos', icon: Camera },
     { label: 'Reporters Roster', href: '/reporters', icon: User },
@@ -197,8 +195,8 @@ export default function NewsightNavDrawer({
             </div>
           </div>
 
-          {/* 2. News Desks & Categories */}
-          {categories.length > 0 && (
+          {/* 2. News Desks & Categories (only show categories that have published articles) */}
+          {categories.filter(c => Number((c as any).article_count || 0) > 0).length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#71869C] dark:text-[#707B8B]">
@@ -214,7 +212,7 @@ export default function NewsightNavDrawer({
                 </Link>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {categories.slice(0, 12).map((cat) => (
+                {categories.filter(c => Number((c as any).article_count || 0) > 0).slice(0, 12).map((cat) => (
                   <Link
                     key={cat.slug}
                     href={`/category/${cat.slug}`}
@@ -233,39 +231,7 @@ export default function NewsightNavDrawer({
             </div>
           )}
 
-          {/* 3. Original Programs & Shows */}
-          {shows.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#71869C] dark:text-[#707B8B]">
-                  Featured Broadcast Programs
-                </h3>
-                <Link
-                  href="/shows"
-                  onClick={onClose}
-                  className="text-xs font-bold text-[#079FE3] hover:underline flex items-center gap-1"
-                >
-                  <span>All Shows</span>
-                  <ChevronRight className="w-3 h-3" />
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {shows.slice(0, 4).map((show) => (
-                  <Link
-                    key={show.slug}
-                    href={`/shows/${show.slug}`}
-                    onClick={onClose}
-                    className={`p-2.5 rounded-lg border font-semibold transition-colors truncate block ${isDark
-                        ? 'bg-[#121925] hover:bg-[#1B2432] border-[#252D39] text-[#F5F7FA]'
-                        : 'bg-[#F0F7FD] hover:bg-[#E5F2FC] border-[#DCE7F2] text-[#174A7E]'
-                      }`}
-                  >
-                    {show.title}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+
 
           {/* 4. Standards & Editorial Governance */}
           <div>

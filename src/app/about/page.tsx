@@ -5,7 +5,7 @@ import PublicLayout from '@/components/public/PublicLayout';
 import { Shield, BookOpen, Users, Award, ChevronRight } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About NEWSIGHT | Digital News & Video Journalism Platform',
+  title: 'About NEWSIGHT | Digital News & Investigative Journalism Platform',
   description: 'Our mission, editorial philosophy, verification methodology, and commitment to independent digital journalism.',
 };
 
@@ -25,7 +25,7 @@ export default async function AboutPage() {
             About NEWSIGHT
           </h1>
           <p className="mt-3 text-base sm:text-lg text-[#A4ADBB] leading-relaxed">
-            A digital-first video journalism and investigative news platform established to report with uncompromising fidelity on constitutional governance, global diplomacy, industrial economics, and regional ecological realities.
+            A digital-first investigative news and photojournalism platform established to report with uncompromising fidelity on constitutional governance, global diplomacy, industrial economics, and regional ecological realities.
           </p>
         </div>
 
@@ -71,9 +71,9 @@ export default async function AboutPage() {
             </span>
           </blockquote>
 
-          <h2>Video Journalism & Ground Dispatches</h2>
+          <h2>Visual Journalism & Ground Dispatches</h2>
           <p>
-            Rather than relying on studio soundbites, NEWSIGHT invests in deep on-the-record field reporting. From the solar boat yards of Vembanad Lake to deep space antenna cleanrooms and high-altitude Himalayan microgrids, our reporters produce visual documents that inform and endure.
+            Rather than relying on studio soundbites, NEWSIGHT invests in deep on-the-record field reporting. From the solar boat yards of Vembanad Lake to deep space antenna cleanrooms and high-altitude Himalayan microgrids, our reporters produce visual documents and written accounts that inform and endure.
           </p>
 
           <h2>Transparency & Corrections Policy</h2>

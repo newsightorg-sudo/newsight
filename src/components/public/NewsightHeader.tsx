@@ -34,24 +34,19 @@ interface SearchResultArticle {
 interface NewsightHeaderProps {
   user?: any;
   breakingNews?: { title: string; url: string; time?: string };
-  categories?: { id: string; name: string; slug: string }[];
+  categories?: { id: string; name: string; slug: string; article_count?: number }[];
   shows?: { id: string; title: string; slug: string }[];
+  hasPhotoStories?: boolean;
+  hasReporters?: boolean;
 }
-
-const TRENDING_TOPICS = [
-  'Semiconductor Corridor',
-  'Solar Catamarans',
-  'Constitution Bench',
-  'Fiscal Deficit',
-  'Space Telemetry',
-  'Kerala Maritime'
-];
 
 export default function NewsightHeader({
   user,
   breakingNews,
   categories = [],
-  shows = []
+  shows = [],
+  hasPhotoStories = true,
+  hasReporters = true
 }: NewsightHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -218,18 +213,11 @@ export default function NewsightHeader({
     } catch (_) {}
   };
 
-  // Curate Primary Desk Navigation Links
-  const curatedDesks = categories.length > 0
-    ? categories.slice(0, 9)
-    : [
-        { id: '1', name: 'Top Stories', slug: 'top-stories' },
-        { id: '2', name: 'Politics', slug: 'politics' },
-        { id: '3', name: 'Technology', slug: 'technology' },
-        { id: '4', name: 'Business', slug: 'business' },
-        { id: '5', name: 'World', slug: 'world' },
-        { id: '6', name: 'Kerala', slug: 'kerala' },
-        { id: '7', name: 'Opinion', slug: 'opinion' },
-      ];
+  // Curate Primary Desk Navigation Links (strictly only categories that have published articles)
+  const curatedDesks = categories.filter((c: any) => {
+    const count = Number(c.article_count);
+    return !isNaN(count) && count > 0;
+  });
 
   return (
     <>
@@ -324,26 +312,26 @@ export default function NewsightHeader({
                   ? 'bg-[#0E131C] border-[#252D39] text-[#F5F7FA]' 
                   : 'bg-white border-[#DCE7F2] text-[#174A7E]'
               }`}>
-                {/* Empty State: Trending Searches */}
-                {searchQuery.trim().length < 2 && (
+                {/* Empty State: Active Desks Searches */}
+                {searchQuery.trim().length < 2 && curatedDesks.length > 0 && (
                   <div className="p-3.5">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-[#71869C] dark:text-[#707B8B] mb-2 px-1 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-[#079FE3]" />
-                      <span>Trending Topics in the Newsroom</span>
+                      <span>Active Coverage Desks</span>
                     </p>
                     <div className="flex flex-wrap gap-1.5">
-                      {TRENDING_TOPICS.map((topic) => (
+                      {curatedDesks.slice(0, 6).map((desk) => (
                         <button
-                          key={topic}
+                          key={desk.slug}
                           type="button"
-                          onClick={() => handleTopicClick(topic)}
+                          onClick={() => handleTopicClick(desk.name)}
                           className={`px-2.5 py-1 text-xs rounded-lg border transition-colors cursor-pointer ${
                             isDark
                               ? 'bg-[#121925] hover:bg-[#1B2432] text-[#A4ADBB] hover:text-white border-[#252D39]'
                               : 'bg-[#F0F7FD] hover:bg-[#E5F2FC] text-[#294767] hover:text-[#087FC1] border-[#DCE7F2]'
                           }`}
                         >
-                          {topic}
+                          {desk.name}
                         </button>
                       ))}
                     </div>
@@ -535,7 +523,7 @@ export default function NewsightHeader({
                   <div className={`max-h-72 overflow-y-auto divide-y ${
                     isDark ? 'divide-[#252D39]/50' : 'divide-[#E5EDF5]'
                   }`}>
-                    {breakingNews && (
+                    {breakingNews?.title ? (
                       <Link
                         href={breakingNews.url || '/'}
                         onClick={() => setIsNotifOpen(false)}
@@ -555,27 +543,11 @@ export default function NewsightHeader({
                           {breakingNews.title}
                         </p>
                       </Link>
-                    )}
-
-                    <Link
-                      href="/shows/the-daily-brief"
-                      onClick={() => setIsNotifOpen(false)}
-                      className={`p-3.5 block transition-colors ${
-                        isDark ? 'hover:bg-[#1B2432]' : 'hover:bg-[#F0F7FD]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-[#1261A6] text-white">
-                          SPECIAL REPORT
-                        </span>
-                        <span className="text-[10px] text-[#71869C]">Daily Briefing</span>
+                    ) : (
+                      <div className="p-4 text-center text-xs text-[#71869C]">
+                        No active alerts or breaking dispatches.
                       </div>
-                      <p className={`text-xs font-medium line-clamp-2 ${
-                        isDark ? 'text-[#F5F7FA]' : 'text-[#294767]'
-                      }`}>
-                        Supreme Court Constitution Bench reserves verdict on digital intermediary safeguards.
-                      </p>
-                    </Link>
+                    )}
                   </div>
                 </div>
               )}
@@ -709,47 +681,38 @@ export default function NewsightHeader({
             );
           })}
 
-          <Link
-            href="/shows"
-            prefetch={true}
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors ${
-              pathname.startsWith('/shows')
-                ? 'bg-[#079FE3] text-white font-bold'
-                : isDark
-                ? 'text-[#A4ADBB] hover:text-white hover:bg-[#121925]'
-                : 'text-[#294767] hover:text-[#079FE3] hover:bg-[#E5F2FC]'
-            }`}
-          >
-            Shows
-          </Link>
 
-          <Link
-            href="/photos"
-            prefetch={true}
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors ${
-              pathname.startsWith('/photos')
-                ? 'bg-[#079FE3] text-white font-bold'
-                : isDark
-                ? 'text-[#A4ADBB] hover:text-white hover:bg-[#121925]'
-                : 'text-[#294767] hover:text-[#079FE3] hover:bg-[#E5F2FC]'
-            }`}
-          >
-            Photo Stories
-          </Link>
+          {hasPhotoStories && (
+            <Link
+              href="/photos"
+              prefetch={true}
+              className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors ${
+                pathname.startsWith('/photos')
+                  ? 'bg-[#079FE3] text-white font-bold'
+                  : isDark
+                  ? 'text-[#A4ADBB] hover:text-white hover:bg-[#121925]'
+                  : 'text-[#294767] hover:text-[#079FE3] hover:bg-[#E5F2FC]'
+              }`}
+            >
+              Photo Stories
+            </Link>
+          )}
 
-          <Link
-            href="/reporters"
-            prefetch={true}
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors ${
-              pathname.startsWith('/reporters')
-                ? 'bg-[#079FE3] text-white font-bold'
-                : isDark
-                ? 'text-[#A4ADBB] hover:text-white hover:bg-[#121925]'
-                : 'text-[#294767] hover:text-[#079FE3] hover:bg-[#E5F2FC]'
-            }`}
-          >
-            Reporters
-          </Link>
+          {hasReporters && (
+            <Link
+              href="/reporters"
+              prefetch={true}
+              className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors ${
+                pathname.startsWith('/reporters')
+                  ? 'bg-[#079FE3] text-white font-bold'
+                  : isDark
+                  ? 'text-[#A4ADBB] hover:text-white hover:bg-[#121925]'
+                  : 'text-[#294767] hover:text-[#079FE3] hover:bg-[#E5F2FC]'
+              }`}
+            >
+              Reporters
+            </Link>
+          )}
 
           <div className="ml-auto pl-2 shrink-0">
             <Link

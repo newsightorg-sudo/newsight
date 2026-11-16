@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   return {
     title: `${category.name} | NEWSIGHT Digital Coverage`,
-    description: category.description || `Verified reporting and video journalism in ${category.name}.`,
+    description: category.description || `Verified reporting and investigative journalism in ${category.name}.`,
   };
 }
 

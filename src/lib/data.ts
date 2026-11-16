@@ -95,14 +95,14 @@ export const getEditorialSettings = cache(async (): Promise<EditorialSettings> =
 
   const result = toPlain({
     publication_name: map.publication_name || 'NEWSIGHT',
-    tagline: map.tagline || 'Professional Digital News & Video Journalism',
+    tagline: map.tagline || 'Professional Digital News & Investigative Journalism',
     logo_url: map.logo_url || '',
     primary_color: map.primary_color || '#080B11',
     accent_color: map.accent_color || '#E50914',
-    breaking_banner_active: map.breaking_banner_active === '1' || map.breaking_banner_active === undefined,
-    breaking_headline: map.breaking_headline || 'Global Semiconductor Summit: India Unveils ₹76,000 Cr Fabrication Corridor',
-    breaking_url: map.breaking_url || '/article/global-semiconductor-summit-india-fabrication-corridor',
-    breaking_time: map.breaking_time || 'LIVE UPDATE',
+    breaking_banner_active: map.breaking_banner_active === '1',
+    breaking_headline: map.breaking_headline || '',
+    breaking_url: map.breaking_url || '',
+    breaking_time: map.breaking_time || '',
     contact_email: map.contact_email || 'editorial@newsight.media',
     contact_phone: map.contact_phone || '+91 11 4980 7700',
     address: map.address || 'NEWSIGHT Media Tower, 14 Cyber Boulevard, New Delhi 110001',
@@ -112,14 +112,14 @@ export const getEditorialSettings = cache(async (): Promise<EditorialSettings> =
     linkedin_url: map.linkedin_url || 'https://www.linkedin.com/company/oxyfied/',
     youtube_url: map.youtube_url || '',
     footer_text: map.footer_text || '© 2026 NEWSIGHT Digital Journalism Network. All rights reserved.',
-    ads_enabled: map.ads_enabled !== '0',
-    ad_image_url: map.ad_image_url || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=600&q=80',
-    ad_target_url: map.ad_target_url || '/shows/special-investigation',
-    ad_title: map.ad_title || 'NEWSIGHT Special Investigation Series',
-    ad_active: map.ad_active !== '0',
-    live_stream_url: map.live_stream_url || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-    live_stream_title: map.live_stream_title || 'NEWSIGHT 24x7 Broadcast Stream',
-    live_current_show: map.live_current_show || 'The Daily Brief with Editorial Desk',
+    ads_enabled: map.ads_enabled === '1',
+    ad_image_url: map.ad_image_url || '',
+    ad_target_url: map.ad_target_url || '',
+    ad_title: map.ad_title || '',
+    ad_active: map.ad_active === '1',
+    live_stream_url: map.live_stream_url || '',
+    live_stream_title: map.live_stream_title || '',
+    live_current_show: map.live_current_show || '',
     live_schedule_json: map.live_schedule_json || ''
   });
 
@@ -137,47 +137,213 @@ export async function updateEditorialSettings(settings: Partial<Record<string, s
 // 2. Categories
 export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat-1', name: 'Top Stories', slug: 'top-stories', description: 'Real-time coverage and breaking developments.', color: '#E50914', order_index: 1, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-news', name: 'News', slug: 'news', description: 'National and global headlines.', color: '#075DEB', order_index: 2, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-politics', name: 'Politics', slug: 'politics', description: 'Parliamentary coverage, elections, and public policy.', color: '#079FE3', order_index: 3, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-india', name: 'India', slug: 'india', description: 'Comprehensive reporting from across India.', color: '#F59E0B', order_index: 4, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-world', name: 'World', slug: 'world', description: 'Geopolitics, diplomacy, and global affairs.', color: '#8B5CF6', order_index: 5, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-kerala', name: 'Kerala', slug: 'kerala', description: 'Regional investigations and state affairs from Kerala.', color: '#10B981', order_index: 6, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-business', name: 'Business', slug: 'business', description: 'Financial markets, macroeconomic analysis, and corporate filings.', color: '#14B8A6', order_index: 7, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-tech', name: 'Technology', slug: 'technology', description: 'Semiconductors, AI architecture, and tech policy.', color: '#6366F1', order_index: 8, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-sports', name: 'Sports', slug: 'sports', description: 'Tournaments, athletics, and sports reporting.', color: '#EF4444', order_index: 9, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-science', name: 'Science', slug: 'science', description: 'Space exploration, astrophysics, and climate telemetry.', color: '#06B6D4', order_index: 10, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-environment', name: 'Environment', slug: 'environment', description: 'Ecological investigations and climate policy.', color: '#22C55E', order_index: 11, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-investigations', name: 'Investigations', slug: 'investigations', description: 'In-depth investigative reports.', color: '#EC4899', order_index: 12, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-opinion', name: 'Opinion', slug: 'opinion', description: 'Editorial commentary and expert perspectives.', color: '#A855F7', order_index: 13, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-entertainment', name: 'Entertainment', slug: 'entertainment', description: 'Cinema, arts, and cultural commentary.', color: '#F43F5E', order_index: 14, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-lifestyle', name: 'Lifestyle', slug: 'lifestyle', description: 'Culture, society, and modern life.', color: '#84CC16', order_index: 15, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-travel', name: 'Travel', slug: 'travel', description: 'Expeditions and field reporting.', color: '#0EA5E9', order_index: 16, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-elections', name: 'Elections', slug: 'elections', description: 'Democracy in action and electoral data.', color: '#F97316', order_index: 17, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-special-reports', name: 'Special Reports', slug: 'special-reports', description: 'Special visual dispatches and series.', color: '#E11D48', order_index: 18, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' }
+  { id: 'cat-field-reports', name: 'Latest Field Reports & Stories', slug: 'field-reports', description: 'On-the-ground investigative dispatches and field reporting.', color: '#E50914', order_index: 2, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-recent-dispatches', name: 'Recent Dispatches & Articles', slug: 'recent-dispatches', description: 'Latest dispatches, ground updates, and breaking articles.', color: '#079FE3', order_index: 3, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-investigations', name: 'Special Investigations & Ground Desks', slug: 'investigations', description: 'In-depth investigative reports and public interest investigations.', color: '#075DEB', order_index: 4, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-news', name: 'News', slug: 'news', description: 'National and global headlines.', color: '#075DEB', order_index: 5, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-politics', name: 'Politics', slug: 'politics', description: 'Parliamentary coverage, elections, and public policy.', color: '#079FE3', order_index: 6, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-india', name: 'India', slug: 'india', description: 'Comprehensive reporting from across India.', color: '#F59E0B', order_index: 7, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-kerala', name: 'Kerala', slug: 'kerala', description: 'Regional investigations and state affairs from Kerala.', color: '#10B981', order_index: 8, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-business', name: 'Business', slug: 'business', description: 'Financial markets, macroeconomic analysis, and corporate filings.', color: '#14B8A6', order_index: 9, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-tech', name: 'Technology', slug: 'technology', description: 'Semiconductors, AI architecture, and tech policy.', color: '#6366F1', order_index: 10, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-sports', name: 'Sports', slug: 'sports', description: 'Tournaments, athletics, and sports reporting.', color: '#EF4444', order_index: 11, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-science', name: 'Science', slug: 'science', description: 'Space exploration, astrophysics, and climate telemetry.', color: '#06B6D4', order_index: 12, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-environment', name: 'Environment', slug: 'environment', description: 'Ecological investigations and climate policy.', color: '#22C55E', order_index: 13, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-opinion', name: 'Opinion', slug: 'opinion', description: 'Editorial commentary and expert perspectives.', color: '#A855F7', order_index: 14, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-entertainment', name: 'Entertainment', slug: 'entertainment', description: 'Cinema, arts, and cultural commentary.', color: '#F43F5E', order_index: 15, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-lifestyle', name: 'Lifestyle', slug: 'lifestyle', description: 'Culture, society, and modern life.', color: '#84CC16', order_index: 16, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-travel', name: 'Travel', slug: 'travel', description: 'Expeditions and field reporting.', color: '#0EA5E9', order_index: 17, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-elections', name: 'Elections', slug: 'elections', description: 'Democracy in action and electoral data.', color: '#F97316', order_index: 18, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-special-reports', name: 'Special Reports', slug: 'special-reports', description: 'Special visual dispatches and series.', color: '#E11D48', order_index: 19, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' }
 ];
 
-export const getCategories = cache(async (showInNavOnly = false): Promise<Category[]> => {
-  const cacheKey = `categories_${showInNavOnly}`;
+export const getCategories = cache(async (showInNavOnly = false, onlyWithArticles?: boolean): Promise<Category[]> => {
+  const filterByArticles = onlyWithArticles !== undefined ? onlyWithArticles : showInNavOnly;
+  const cacheKey = `categories_${showInNavOnly}_${filterByArticles}`;
   const cached = getFromCache<Category[]>(cacheKey);
   if (cached) return cached;
 
   try {
     const db = getDb();
-    const query = showInNavOnly 
-      ? 'SELECT * FROM categories WHERE show_in_nav = 1 ORDER BY order_index ASC' 
-      : 'SELECT * FROM categories ORDER BY order_index ASC';
-    const rows = await db.prepare(query).all<Category>();
-    if (rows && rows.length > 0) {
-      return setToCache(cacheKey, toPlain(rows), 300);
+    const query = `
+      SELECT 
+        c.id, c.name, c.slug, c.description, c.color, c.order_index, c.show_in_nav, c.created_at,
+        CAST((
+          SELECT COUNT(*) 
+          FROM articles a 
+          WHERE a.status = 'PUBLISHED' 
+            AND (
+              a.category_id = c.id 
+              OR a.category_id = c.slug
+              OR (c.slug = 'top-stories' AND (a.is_lead = 1 OR a.is_featured = 1 OR a.category_id = c.id OR a.category_id = 'cat-1'))
+              OR (c.slug = 'field-reports' AND (a.article_type IN ('GROUND_REPORT', 'FIELD_REPORT') OR a.category_id IN ('cat-field-reports', 'field-reports')))
+              OR (c.slug = 'recent-dispatches' AND (a.article_type IN ('RECENT_DISPATCH', 'DISPATCH') OR a.category_id IN ('cat-recent-dispatches', 'recent-dispatches')))
+              OR (c.slug = 'investigations' AND (a.article_type IN ('INVESTIGATION', 'SPECIAL_INVESTIGATION') OR a.category_id IN ('cat-investigations', 'investigations', 'cat-11', 'cat-special-reports')))
+              OR (c.slug = 'opinion' AND (a.is_opinion = 1 OR a.article_type = 'OPINION' OR a.category_id = 'cat-opinion'))
+            )
+        ) AS INTEGER) as article_count
+      FROM categories c
+      ${showInNavOnly ? 'WHERE c.show_in_nav = 1' : ''}
+      ORDER BY c.order_index ASC
+    `;
+
+    const rawRows = await db.prepare(query).all<any>();
+    if (rawRows && rawRows.length > 0) {
+      let list = toPlain(rawRows).map(c => ({
+        ...c,
+        name: c.slug === 'investigations' ? 'Special Investigations & Ground Desks' : 
+              c.slug === 'field-reports' ? 'Latest Field Reports & Stories' :
+              c.slug === 'recent-dispatches' ? 'Recent Dispatches & Articles' : c.name,
+        article_count: Number(c.article_count || 0)
+      }));
+
+      // Ensure the three special categories exist in list if not already returned from DB
+      if (!list.some(c => c.slug === 'field-reports')) {
+        let fieldCount = 0;
+        try {
+          const fc = await db.prepare(`
+            SELECT COUNT(*) as count FROM articles a 
+            WHERE a.status = 'PUBLISHED' AND (
+              a.article_type IN ('GROUND_REPORT', 'FIELD_REPORT') 
+              OR a.category_id = 'cat-field-reports' 
+              OR a.category_id = 'field-reports'
+            )
+          `).get() as any;
+          fieldCount = Number(fc?.count || 0);
+        } catch (_) {}
+
+        list.push({
+          id: 'cat-field-reports',
+          name: 'Latest Field Reports & Stories',
+          slug: 'field-reports',
+          description: 'On-the-ground investigative dispatches and field reporting.',
+          color: '#E50914',
+          order_index: 2,
+          show_in_nav: 1,
+          created_at: '2026-01-01T00:00:00Z',
+          article_count: fieldCount
+        });
+      }
+
+      if (!list.some(c => c.slug === 'recent-dispatches')) {
+        let recentCount = 0;
+        try {
+          const rc = await db.prepare(`
+            SELECT COUNT(*) as count FROM articles a 
+            WHERE a.status = 'PUBLISHED' AND (
+              a.article_type IN ('RECENT_DISPATCH', 'DISPATCH') 
+              OR a.category_id = 'cat-recent-dispatches' 
+              OR a.category_id = 'recent-dispatches'
+            )
+          `).get() as any;
+          recentCount = Number(rc?.count || 0);
+        } catch (_) {}
+
+        list.push({
+          id: 'cat-recent-dispatches',
+          name: 'Recent Dispatches & Articles',
+          slug: 'recent-dispatches',
+          description: 'Latest dispatches, ground updates, and breaking articles.',
+          color: '#079FE3',
+          order_index: 3,
+          show_in_nav: 1,
+          created_at: '2026-01-01T00:00:00Z',
+          article_count: recentCount
+        });
+      }
+
+      if (!list.some(c => c.slug === 'investigations')) {
+        let invCount = 0;
+        try {
+          const ic = await db.prepare(`
+            SELECT COUNT(*) as count FROM articles a 
+            WHERE a.status = 'PUBLISHED' AND (
+              a.article_type IN ('INVESTIGATION', 'SPECIAL_INVESTIGATION') 
+              OR a.category_id IN ('cat-investigations', 'investigations', 'cat-11', 'cat-special-reports')
+            )
+          `).get() as any;
+          invCount = Number(ic?.count || 0);
+        } catch (_) {}
+
+        list.push({
+          id: 'cat-investigations',
+          name: 'Special Investigations & Ground Desks',
+          slug: 'investigations',
+          description: 'In-depth investigative reports and public interest investigations.',
+          color: '#075DEB',
+          order_index: 4,
+          show_in_nav: 1,
+          created_at: '2026-01-01T00:00:00Z',
+          article_count: invCount
+        });
+      }
+
+      // If filtering by articles (e.g. for public navigation bar), ONLY show categories that have > 0 articles!
+      if (filterByArticles) {
+        list = list.filter(c => Number(c.article_count || 0) > 0);
+      }
+
+      return setToCache(cacheKey, list, 30);
     }
   } catch (e) {
     console.warn('[data] getCategories DB query failed, using defaults:', e);
   }
 
-  const fallback = showInNavOnly 
+  let fallback = showInNavOnly 
     ? DEFAULT_CATEGORIES.filter(c => c.show_in_nav === 1) 
     : DEFAULT_CATEGORIES;
-  return setToCache(cacheKey, fallback, 300);
+
+  if (filterByArticles) {
+    try {
+      const db = getDb();
+      const articles = await db.prepare(`
+        SELECT category_id, article_type, is_lead, is_featured, is_opinion 
+        FROM articles WHERE status = 'PUBLISHED'
+      `).all<any>();
+
+      if (articles && articles.length > 0) {
+        fallback = fallback.filter(c => {
+          const matchCount = articles.filter(a => 
+            a.category_id === c.id || 
+            a.category_id === c.slug ||
+            (c.slug === 'top-stories' && (a.is_lead === 1 || a.is_featured === 1 || a.category_id === 'cat-1')) ||
+            (c.slug === 'field-reports' && (['GROUND_REPORT', 'FIELD_REPORT'].includes(a.article_type) || a.category_id === 'cat-field-reports')) ||
+            (c.slug === 'recent-dispatches' && (['RECENT_DISPATCH', 'DISPATCH'].includes(a.article_type) || a.category_id === 'cat-recent-dispatches')) ||
+            (c.slug === 'investigations' && (['INVESTIGATION', 'SPECIAL_INVESTIGATION'].includes(a.article_type) || ['cat-investigations', 'cat-11', 'cat-special-reports'].includes(a.category_id))) ||
+            (c.slug === 'opinion' && (a.is_opinion === 1 || a.article_type === 'OPINION'))
+          ).length;
+          c.article_count = matchCount;
+          return matchCount > 0;
+        });
+      } else {
+        fallback = [];
+      }
+    } catch (_) {
+      fallback = [];
+    }
+  }
+
+  return setToCache(cacheKey, fallback, 30);
+});
+
+export const getPhotoStoriesCount = cache(async (): Promise<number> => {
+  try {
+    const db = getDb();
+    const row = await db.prepare('SELECT COUNT(*) as count FROM photo_stories').get() as any;
+    return Number(row?.count || 0);
+  } catch (_) {
+    return 0;
+  }
+});
+
+export const getReportersCount = cache(async (): Promise<number> => {
+  try {
+    const db = getDb();
+    const row = await db.prepare('SELECT COUNT(*) as count FROM reporters WHERE is_active = 1').get() as any;
+    return Number(row?.count || 0);
+  } catch (_) {
+    return 0;
+  }
 });
 
 export const getCategoryBySlug = cache(async (slug: string): Promise<Category | null> => {
@@ -221,7 +387,7 @@ export async function getLeadArticle(): Promise<Article | null> {
   const row = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED' AND a.is_lead = 1
-    ORDER BY a.published_at DESC LIMIT 1
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT 1
   `).get();
   return row ? mapArticleRow(row) : null;
 }
@@ -234,7 +400,7 @@ export const getBreakingArticle = cache(async (): Promise<Article | null> => {
   const row = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED' AND a.is_breaking = 1
-    ORDER BY a.published_at DESC LIMIT 1
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT 1
   `).get();
   const result = row ? mapArticleRow(row) : null;
   return setToCache('breaking_article', result, 30);
@@ -245,7 +411,7 @@ export async function getSecondaryArticles(limit = 3): Promise<Article[]> {
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED' AND a.is_lead = 0
-    ORDER BY a.published_at DESC LIMIT ?
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
   `).all(limit);
   return rows.map(mapArticleRow);
 }
@@ -259,7 +425,7 @@ export const getLatestArticles = cache(async (limit = 10, offset = 0): Promise<A
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED'
-    ORDER BY a.published_at DESC LIMIT ? OFFSET ?
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ? OFFSET ?
   `).all(limit, offset);
   const result = rows.map(mapArticleRow);
   return setToCache(cacheKey, result, 30);
@@ -275,7 +441,49 @@ export const getArticlesByCategory = cache(async (categorySlug: string, limit = 
     const rows = await db.prepare(`
       ${ARTICLE_SELECT}
       WHERE a.status = 'PUBLISHED'
-      ORDER BY a.views_count DESC, a.published_at DESC LIMIT ?
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+    `).all(limit);
+    const result = rows.map(mapArticleRow);
+    return setToCache(cacheKey, result, 60);
+  }
+
+  if (categorySlug === 'field-reports') {
+    const rows = await db.prepare(`
+      ${ARTICLE_SELECT}
+      WHERE a.status = 'PUBLISHED' AND (
+        a.article_type IN ('GROUND_REPORT', 'FIELD_REPORT') 
+        OR a.category_id IN ('cat-field-reports', 'field-reports')
+        OR c.slug IN ('field-reports', 'ground-reports')
+      )
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+    `).all(limit);
+    const result = rows.map(mapArticleRow);
+    return setToCache(cacheKey, result, 60);
+  }
+
+  if (categorySlug === 'recent-dispatches') {
+    const rows = await db.prepare(`
+      ${ARTICLE_SELECT}
+      WHERE a.status = 'PUBLISHED' AND (
+        a.article_type IN ('RECENT_DISPATCH', 'DISPATCH') 
+        OR a.category_id IN ('cat-recent-dispatches', 'recent-dispatches')
+        OR c.slug = 'recent-dispatches'
+      )
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+    `).all(limit);
+    const result = rows.map(mapArticleRow);
+    return setToCache(cacheKey, result, 60);
+  }
+
+  if (categorySlug === 'investigations') {
+    const rows = await db.prepare(`
+      ${ARTICLE_SELECT}
+      WHERE a.status = 'PUBLISHED' AND (
+        a.article_type IN ('INVESTIGATION', 'SPECIAL_INVESTIGATION') 
+        OR a.category_id IN ('cat-investigations', 'investigations', 'cat-11', 'cat-special-reports')
+        OR c.slug IN ('investigations', 'ground-desks', 'investigation', 'special-reports')
+      )
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
     `).all(limit);
     const result = rows.map(mapArticleRow);
     return setToCache(cacheKey, result, 60);
@@ -283,9 +491,9 @@ export const getArticlesByCategory = cache(async (categorySlug: string, limit = 
 
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
-    WHERE a.status = 'PUBLISHED' AND c.slug = ?
-    ORDER BY a.published_at DESC LIMIT ?
-  `).all(categorySlug, limit);
+    WHERE a.status = 'PUBLISHED' AND (c.slug = ? OR a.category_id = ?)
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+  `).all(categorySlug, categorySlug, limit);
 
   const result = rows.map(mapArticleRow);
   return setToCache(cacheKey, result, 60);
@@ -297,14 +505,14 @@ export async function getKeralaArticles(district?: string, limit = 8): Promise<A
     const rows = await db.prepare(`
       ${ARTICLE_SELECT}
       WHERE a.status = 'PUBLISHED' AND c.slug = 'kerala' AND a.district = ?
-      ORDER BY a.published_at DESC LIMIT ?
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
     `).all(district, limit);
     return rows.map(mapArticleRow);
   }
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED' AND c.slug = 'kerala'
-    ORDER BY a.published_at DESC LIMIT ?
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
   `).all(limit);
   return rows.map(mapArticleRow);
 }
@@ -318,21 +526,86 @@ export const getOpinionArticles = cache(async (limit = 4): Promise<Article[]> =>
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED' AND (a.is_opinion = 1 OR c.slug = 'opinion')
-    ORDER BY a.published_at DESC LIMIT ?
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
   `).all(limit);
   const result = rows.map(mapArticleRow);
   return setToCache(cacheKey, result, 30);
 });
 
-export async function getInvestigativeArticles(limit = 4): Promise<Article[]> {
+export const getFieldReportArticles = cache(async (limit = 4): Promise<Article[]> => {
+  const cacheKey = `field_report_articles_${limit}`;
+  const cached = getFromCache<Article[]>(cacheKey);
+  if (cached) return cached;
+
   const db = getDb();
-  const rows = await db.prepare(`
-    ${ARTICLE_SELECT}
-    WHERE a.status = 'PUBLISHED' AND (a.article_type = 'INVESTIGATION' OR c.slug = 'investigations')
-    ORDER BY a.published_at DESC LIMIT ?
-  `).all(limit);
-  return rows.map(mapArticleRow);
-}
+  let result: Article[] = [];
+  try {
+    const rows = await db.prepare(`
+      ${ARTICLE_SELECT}
+      WHERE a.status = 'PUBLISHED' AND (
+        a.article_type IN ('GROUND_REPORT', 'FIELD_REPORT') 
+        OR a.category_id IN ('cat-field-reports', 'field-reports')
+        OR c.slug IN ('field-reports', 'ground-reports')
+      )
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+    `).all(limit);
+    result = rows.map(mapArticleRow);
+  } catch (e) {
+    console.warn('[data] getFieldReportArticles failed:', e);
+  }
+
+  return setToCache(cacheKey, result, 30);
+});
+
+export const getRecentDispatchArticles = cache(async (limit = 4): Promise<Article[]> => {
+  const cacheKey = `recent_dispatch_articles_${limit}`;
+  const cached = getFromCache<Article[]>(cacheKey);
+  if (cached) return cached;
+
+  const db = getDb();
+  let result: Article[] = [];
+  try {
+    const rows = await db.prepare(`
+      ${ARTICLE_SELECT}
+      WHERE a.status = 'PUBLISHED' AND (
+        a.article_type IN ('RECENT_DISPATCH', 'DISPATCH') 
+        OR a.category_id IN ('cat-recent-dispatches', 'recent-dispatches')
+        OR c.slug = 'recent-dispatches'
+      )
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+    `).all(limit);
+    result = rows.map(mapArticleRow);
+  } catch (e) {
+    console.warn('[data] getRecentDispatchArticles failed:', e);
+  }
+
+  return setToCache(cacheKey, result, 30);
+});
+
+export const getInvestigativeArticles = cache(async (limit = 4): Promise<Article[]> => {
+  const cacheKey = `investigative_articles_${limit}`;
+  const cached = getFromCache<Article[]>(cacheKey);
+  if (cached) return cached;
+
+  const db = getDb();
+  let result: Article[] = [];
+  try {
+    const rows = await db.prepare(`
+      ${ARTICLE_SELECT}
+      WHERE a.status = 'PUBLISHED' AND (
+        a.article_type IN ('INVESTIGATION', 'SPECIAL_INVESTIGATION') 
+        OR a.category_id IN ('cat-investigations', 'investigations', 'cat-11', 'cat-special-reports')
+        OR c.slug IN ('investigations', 'ground-desks', 'investigation', 'special-reports')
+      )
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
+    `).all(limit);
+    result = rows.map(mapArticleRow);
+  } catch (e) {
+    console.warn('[data] getInvestigativeArticles failed:', e);
+  }
+
+  return setToCache(cacheKey, result, 30);
+});
 
 export const getArticleBySlug = cache(async (slug: string): Promise<Article | null> => {
   const cacheKey = `article_slug_${slug}`;
@@ -785,7 +1058,7 @@ export async function getArticlesByReporter(reporterId: string, limit = 10): Pro
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
     WHERE a.status = 'PUBLISHED' AND a.reporter_id = ?
-    ORDER BY a.published_at DESC LIMIT ?
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT ?
   `).all(reporterId, limit);
   return rows.map(mapArticleRow);
 }
@@ -821,9 +1094,9 @@ export async function searchArticles(query: string, options?: { category?: strin
   }
 
   if (options?.sort === 'views') {
-    sql += ` ORDER BY a.views_count DESC LIMIT 30`;
+    sql += ` ORDER BY a.views_count DESC, COALESCE(a.published_at, a.created_at) DESC LIMIT 30`;
   } else {
-    sql += ` ORDER BY a.published_at DESC LIMIT 30`;
+    sql += ` ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC LIMIT 30`;
   }
 
   const rows = await db.prepare(sql).all(...params);
@@ -872,13 +1145,13 @@ export async function getAllArticlesAdmin(status = 'ALL'): Promise<Article[]> {
     const rows = await db.prepare(`
       ${ARTICLE_SELECT}
       WHERE a.status = ?
-      ORDER BY a.created_at DESC
+      ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC
     `).all(status);
     return rows.map(mapArticleRow);
   }
   const rows = await db.prepare(`
     ${ARTICLE_SELECT}
-    ORDER BY a.created_at DESC
+    ORDER BY COALESCE(a.published_at, a.created_at) DESC, a.created_at DESC, a.id DESC
   `).all();
   return rows.map(mapArticleRow);
 }

@@ -394,18 +394,19 @@ export default function ArticleForm({
 
             <div>
               <label className="block font-bold text-[#496784] dark:text-[#B6C3D4] mb-1.5">
-                Story Format
+                Story Format & Editorial Desk Type
               </label>
               <select
                 value={articleType}
                 onChange={(e) => setArticleType(e.target.value as any)}
-                className="w-full p-2.5 bg-white dark:bg-[#0D1626] border border-[#DCE7F2] dark:border-[#27364B] text-[#174A7E] dark:text-[#F4F7FB] rounded-lg focus:outline-none focus:border-[#079FE3] cursor-pointer"
+                className="w-full p-2.5 bg-white dark:bg-[#0D1626] border border-[#DCE7F2] dark:border-[#27364B] text-[#174A7E] dark:text-[#F4F7FB] rounded-lg focus:outline-none focus:border-[#079FE3] cursor-pointer font-medium"
               >
-                <option value="NEWS">Reported News</option>
+                <option value="GROUND_REPORT">Latest Field Reports & Stories</option>
+                <option value="RECENT_DISPATCH">Recent Dispatches & Articles</option>
+                <option value="INVESTIGATION">Special Investigations & Ground Desks</option>
+                <option value="NEWS">General News Report</option>
                 <option value="ANALYSIS">Analysis & Deep Dive</option>
                 <option value="OPINION">Opinion & Column</option>
-                <option value="INVESTIGATION">Special Investigation</option>
-                <option value="GROUND_REPORT">Ground Report</option>
                 <option value="EXPLAINER">Explainer</option>
               </select>
             </div>
@@ -430,6 +431,7 @@ export default function ArticleForm({
               Homepage Placement Flags
             </h3>
 
+            {/* Hero Lead Story */}
             <label className="flex items-center gap-2.5 text-[#174A7E] dark:text-[#F4F7FB] cursor-pointer py-1">
               <input
                 type="checkbox"
@@ -437,9 +439,70 @@ export default function ArticleForm({
                 onChange={(e) => setIsLead(e.target.checked)}
                 className="rounded border-[#DCE7F2] text-[#079FE3] focus:ring-0 cursor-pointer"
               />
-              <span className="font-semibold text-xs">Hero Lead Story Position</span>
+              <span className="font-semibold text-xs">Featured Story (Hero Position)</span>
             </label>
 
+            {/* Latest Field Reports & Stories */}
+            <label className="flex items-start gap-2.5 text-[#E50914] cursor-pointer p-2 rounded-lg bg-red-50/70 dark:bg-red-950/20 border border-red-200/60 dark:border-red-900/40">
+              <input
+                type="checkbox"
+                checked={articleType === 'GROUND_REPORT' || categoryId === 'cat-field-reports'}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setArticleType('GROUND_REPORT');
+                  } else if (articleType === 'GROUND_REPORT') {
+                    setArticleType('NEWS');
+                  }
+                }}
+                className="mt-0.5 rounded border-red-300 text-[#E50914] focus:ring-0 cursor-pointer shrink-0"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-xs text-[#E50914]">Latest Field Reports & Stories</span>
+                <span className="text-[10px] text-[#7890A8] leading-tight">Feature in Homepage Section B field reports showcase</span>
+              </div>
+            </label>
+
+            {/* Recent Dispatches & Articles */}
+            <label className="flex items-start gap-2.5 text-[#079FE3] cursor-pointer p-2 rounded-lg bg-sky-50/70 dark:bg-sky-950/20 border border-sky-200/60 dark:border-sky-900/40">
+              <input
+                type="checkbox"
+                checked={articleType === 'RECENT_DISPATCH' || categoryId === 'cat-recent-dispatches'}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setArticleType('RECENT_DISPATCH');
+                  } else if (articleType === 'RECENT_DISPATCH') {
+                    setArticleType('NEWS');
+                  }
+                }}
+                className="mt-0.5 rounded border-sky-300 text-[#079FE3] focus:ring-0 cursor-pointer shrink-0"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-xs text-[#079FE3]">Recent Dispatches & Articles</span>
+                <span className="text-[10px] text-[#7890A8] leading-tight">Feature in Homepage Section C dispatches feed</span>
+              </div>
+            </label>
+
+            {/* Special Investigations & Ground Desks */}
+            <label className="flex items-start gap-2.5 text-[#075DEB] dark:text-blue-400 cursor-pointer p-2 rounded-lg bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40">
+              <input
+                type="checkbox"
+                checked={articleType === 'INVESTIGATION' || categoryId === 'cat-investigations'}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setArticleType('INVESTIGATION');
+                  } else if (articleType === 'INVESTIGATION') {
+                    setArticleType('NEWS');
+                  }
+                }}
+                className="mt-0.5 rounded border-blue-300 text-[#075DEB] focus:ring-0 cursor-pointer shrink-0"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-xs text-[#075DEB] dark:text-blue-400">Special Investigations & Ground Desks</span>
+                <span className="text-[10px] text-[#7890A8] leading-tight">Feature in Homepage Section E investigations showcase</span>
+              </div>
+            </label>
+
+            {/* Breaking News Alert */}
             <label className="flex items-center gap-2.5 text-[#D71920] cursor-pointer py-1">
               <input
                 type="checkbox"
@@ -450,6 +513,7 @@ export default function ArticleForm({
               <span className="font-bold text-xs">Breaking News Alert (Banner)</span>
             </label>
 
+            {/* Featured in Top Stories */}
             <label className="flex items-center gap-2.5 text-[#496784] dark:text-[#B6C3D4] cursor-pointer py-1">
               <input
                 type="checkbox"
@@ -457,9 +521,10 @@ export default function ArticleForm({
                 onChange={(e) => setIsFeatured(e.target.checked)}
                 className="rounded border-[#DCE7F2] text-[#079FE3] focus:ring-0 cursor-pointer"
               />
-              <span className="font-medium text-xs">Featured in Desk Tops</span>
+              <span className="font-medium text-xs">Top Stories & Most Read Reports</span>
             </label>
 
+            {/* Opinion & Editorial Column */}
             <label className="flex items-center gap-2.5 text-[#496784] dark:text-[#B6C3D4] cursor-pointer py-1">
               <input
                 type="checkbox"

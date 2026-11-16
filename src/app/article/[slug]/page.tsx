@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
   getArticleBySlug, getRelatedArticles, getEditorialSettings, 
-  getCommentsForArticle, getVideosByCategory, getLatestArticles 
+  getCommentsForArticle, getLatestArticles 
 } from '@/lib/data';
 import { getCurrentUser } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
@@ -12,9 +12,8 @@ import PublicLayout from '@/components/public/PublicLayout';
 import ReadingProgressBar from '@/components/public/ReadingProgressBar';
 import SocialShareBar from '@/components/public/SocialShareBar';
 import CommentBox from '@/components/public/CommentBox';
-import VideoCard from '@/components/public/VideoCard';
 import { 
-  Clock, Calendar, AlertTriangle, User, PlaySquare, ChevronRight, Share2 
+  Clock, Calendar, AlertTriangle, User, ChevronRight, Share2 
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -50,11 +49,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
-  const [user, settings, relatedArticles, relatedVideos, comments] = await Promise.all([
+  const [user, settings, relatedArticles, comments] = await Promise.all([
     getCurrentUser(),
     getEditorialSettings(),
     getRelatedArticles(article.id, article.category_id, 3),
-    getVideosByCategory(article.category_name || 'News', 3),
     getCommentsForArticle(article.id)
   ]);
 
@@ -207,28 +205,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {/* Related Videos Rail */}
-        {relatedVideos.length > 0 && (
-          <section className="pt-8 border-t border-[#252D39] space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <PlaySquare className="w-4 h-4 text-[#E50914]" />
-                <h3 className="text-sm font-black uppercase tracking-wider text-white">
-                  Related Video Broadcasts
-                </h3>
-              </div>
-              <Link href="/video" className="text-xs font-bold text-[#075DEB] hover:underline uppercase">
-                All Videos
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {relatedVideos.map((vid) => (
-                <VideoCard key={vid.id} video={vid} />
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (

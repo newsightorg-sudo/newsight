@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  LayoutDashboard, FileText, CheckSquare, Radio, Video, Film,
+  LayoutDashboard, FileText, CheckSquare, Radio,
   Users, FolderTree, Image as ImageIcon, Mail, Settings, 
   ExternalLink, LogOut, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
@@ -57,8 +57,6 @@ export default function AdminSidebar({
       groupName: 'MEDIA',
       items: [
         { name: 'Media Library', href: '/admin/media', icon: ImageIcon },
-        { name: 'Video Journalism', href: '/admin/videos', icon: Video },
-        { name: 'Shows & Programs', href: '/admin/shows', icon: Film },
       ],
     },
     {

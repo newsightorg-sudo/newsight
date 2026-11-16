@@ -91,37 +91,32 @@ export default function NewsightFooter({ settings }: FooterProps) {
           {/* Column 2: Stories & Series */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#F5F7FA] mb-3">
-              Special Series & Columns
+              Special Series & Reporting
             </h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/video" className="hover:text-white transition-colors">
-                  Latest Field Reports
+                <Link href="/category/top-stories" className="hover:text-white transition-colors">
+                  Top Stories & Headlines
                 </Link>
               </li>
               <li>
-                <Link href="/top-videos" className="hover:text-white transition-colors">
-                  Top Trending Stories
+                <Link href="/category/investigations" className="hover:text-white transition-colors">
+                  Ground Investigations
                 </Link>
               </li>
               <li>
-                <Link href="/shows/the-daily-brief" className="hover:text-white transition-colors">
-                  The Daily Brief
+                <Link href="/opinion" className="hover:text-white transition-colors">
+                  Editorials & Opinions
                 </Link>
               </li>
               <li>
-                <Link href="/shows/ground-report" className="hover:text-white transition-colors">
-                  Ground Report
+                <Link href="/photos" className="hover:text-white transition-colors">
+                  Photo Stories & Dispatches
                 </Link>
               </li>
               <li>
-                <Link href="/shows/the-big-interview" className="hover:text-white transition-colors">
-                  The Big Interview
-                </Link>
-              </li>
-              <li>
-                <Link href="/shows/news-explained" className="hover:text-white transition-colors">
-                  News Explained
+                <Link href="/regional/kerala" className="hover:text-white transition-colors">
+                  Kerala Ground Bureau
                 </Link>
               </li>
               <li>

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getDb } from '@/lib/db';
 import { getCurrentUser, canPublish } from '@/lib/auth';
 import { slugify, estimateReadingTime } from '@/lib/utils';
@@ -68,6 +69,42 @@ export async function POST(req: Request) {
     const now = new Date().toISOString();
     const publishedAt = targetStatus === 'PUBLISHED' ? now : null;
 
+    // Ensure special categories exist if selected
+    let targetCategoryId = category_id;
+    try {
+      if (category_id === 'cat-field-reports' || category_id === 'field-reports') {
+        const cat = await db.prepare('SELECT id FROM categories WHERE id = ? OR slug = ?').get('cat-field-reports', 'field-reports');
+        if (!cat) {
+          await db.prepare(`
+            INSERT INTO categories (id, name, slug, description, color, order_index, show_in_nav, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run('cat-field-reports', 'Latest Field Reports & Stories', 'field-reports', 'On-the-ground visual dispatches and field reporting.', '#E50914', 2, 1, now);
+        } else {
+          targetCategoryId = (cat as any).id;
+        }
+      } else if (category_id === 'cat-recent-dispatches' || category_id === 'recent-dispatches') {
+        const cat = await db.prepare('SELECT id FROM categories WHERE id = ? OR slug = ?').get('cat-recent-dispatches', 'recent-dispatches');
+        if (!cat) {
+          await db.prepare(`
+            INSERT INTO categories (id, name, slug, description, color, order_index, show_in_nav, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run('cat-recent-dispatches', 'Recent Dispatches & Articles', 'recent-dispatches', 'Latest dispatches, ground updates, and breaking articles.', '#079FE3', 3, 1, now);
+        } else {
+          targetCategoryId = (cat as any).id;
+        }
+      } else if (category_id === 'cat-investigations' || category_id === 'investigations') {
+        const cat = await db.prepare('SELECT id FROM categories WHERE id = ? OR slug = ?').get('cat-investigations', 'investigations');
+        if (!cat) {
+          await db.prepare(`
+            INSERT INTO categories (id, name, slug, description, color, order_index, show_in_nav, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run('cat-investigations', 'Special Investigations & Ground Desks', 'investigations', 'In-depth investigative reports and public interest investigations.', '#075DEB', 4, 1, now);
+        } else {
+          targetCategoryId = (cat as any).id;
+        }
+      }
+    } catch (_) {}
+
     await db.prepare(`
       INSERT INTO articles (
         id, title, slug, deck, body, featured_image, image_caption, image_credit,
@@ -89,7 +126,7 @@ export async function POST(req: Request) {
       featured_image || 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80',
       image_caption || '',
       image_credit || '',
-      category_id,
+      targetCategoryId,
       reporter_id,
       targetStatus,
       article_type,
@@ -107,6 +144,8 @@ export async function POST(req: Request) {
     );
 
     invalidateDataCache('article');
+    invalidateDataCache('categories');
+    revalidatePath('/', 'layout');
     return NextResponse.json({
       success: true,
       article: { id, slug: finalSlug, status: targetStatus },

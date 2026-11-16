@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  Home, PlaySquare, LayoutGrid, Film, Award, TrendingUp, ShieldCheck 
+  Home, PlaySquare, LayoutGrid, Award, TrendingUp, ShieldCheck 
 } from 'lucide-react';
 
 interface NewsightSidebarProps {
@@ -23,9 +23,8 @@ export default function NewsightSidebar({ adSettings, activeItem }: NewsightSide
   const navItems = [
     { label: 'Home', href: '/', icon: Home, key: 'home' },
     { label: 'Categories', href: '/categories', icon: LayoutGrid, key: 'categories' },
-    { label: 'Shows', href: '/shows', icon: Film, key: 'shows' },
     { label: 'NEWSIGHT Classics', href: '/classics', icon: Award, key: 'classics' },
-    { label: 'Top Stories', href: '/top-videos', icon: TrendingUp, key: 'top-videos' },
+    { label: 'Top Stories', href: '/category/top-stories', icon: TrendingUp, key: 'top-stories' },
   ];
 
   const isItemActive = (href: string, key?: string) => {
@@ -35,20 +34,14 @@ export default function NewsightSidebar({ adSettings, activeItem }: NewsightSide
     if (href === '/') {
       return pathname === '/';
     }
-    if (href === '/video') {
-      return pathname === '/video' || pathname.startsWith('/video/');
-    }
-    if (href === '/shows') {
-      return pathname === '/shows' || pathname.startsWith('/shows/');
-    }
     if (href === '/categories') {
       return pathname === '/categories' || pathname.startsWith('/category/');
     }
     if (href === '/classics') {
       return pathname === '/classics';
     }
-    if (href === '/top-videos') {
-      return pathname === '/top-videos';
+    if (href === '/category/top-stories') {
+      return pathname === '/category/top-stories' || pathname === '/top-videos';
     }
     return pathname === href;
   };

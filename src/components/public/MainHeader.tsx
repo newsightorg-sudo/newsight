@@ -39,7 +39,6 @@ export default function MainHeader({
     { name: 'Sports', href: '/category/sports' },
     { name: 'Investigations', href: '/category/investigations' },
     { name: 'Opinion', href: '/opinion' },
-    { name: 'Video', href: '/video' },
     { name: 'Photo Stories', href: '/photos' },
   ];
 

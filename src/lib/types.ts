@@ -2,7 +2,7 @@ export type UserRole = 'SUPER_ADMIN' | 'EDITOR' | 'REPORTER' | 'VIDEO_JOURNALIST
 
 export type ArticleStatus = 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
 
-export type ArticleType = 'NEWS' | 'ANALYSIS' | 'OPINION' | 'INVESTIGATION' | 'EXPLAINER' | 'GROUND_REPORT';
+export type ArticleType = 'NEWS' | 'ANALYSIS' | 'OPINION' | 'INVESTIGATION' | 'EXPLAINER' | 'GROUND_REPORT' | 'FIELD_REPORT' | 'RECENT_DISPATCH';
 
 export interface User {
   id: string;
@@ -43,6 +43,7 @@ export interface Category {
   order_index: number;
   show_in_nav: number;
   created_at: string;
+  article_count?: number;
 }
 
 export interface Tag {

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, PlaySquare, Film, LayoutGrid, Radio } from 'lucide-react';
+import { Home, TrendingUp, LayoutGrid, Radio } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
 export default function MobileBottomNav() {
@@ -13,9 +13,7 @@ export default function MobileBottomNav() {
 
   const navItems = [
     { label: 'Home', href: '/', icon: Home, exact: true },
-    { label: 'Video', href: '/video', icon: PlaySquare },
-    { label: 'Live', href: '/live', icon: Radio, pulse: true },
-    { label: 'Shows', href: '/shows', icon: Film },
+    { label: 'Top Stories', href: '/category/top-stories', icon: TrendingUp },
     { label: 'Desks', href: '/categories', icon: LayoutGrid },
   ];
 

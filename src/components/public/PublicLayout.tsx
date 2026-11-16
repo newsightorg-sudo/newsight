@@ -4,7 +4,10 @@ import NewsightSidebar from './NewsightSidebar';
 import BreakingNewsBar from './BreakingNewsBar';
 import NewsightFooter from './NewsightFooter';
 import MobileBottomNav from './MobileBottomNav';
-import { getEditorialSettings, getCategories, getShows, getBreakingArticle } from '@/lib/data';
+import { 
+  getEditorialSettings, getCategories, getShows, getBreakingArticle,
+  getPhotoStoriesCount, getReportersCount 
+} from '@/lib/data';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -23,9 +26,11 @@ export default async function PublicLayout({
   categories: initialCategories,
   activeSidebar
 }: PublicLayoutProps) {
-  const [settings, categories, shows, breakingStory] = await Promise.all([
+  const [settings, categories, photoStoriesCount, reportersCount, shows, breakingStory] = await Promise.all([
     initialSettings ? Promise.resolve(initialSettings) : getEditorialSettings(),
     initialCategories ? Promise.resolve(initialCategories) : getCategories(true),
+    getPhotoStoriesCount(),
+    getReportersCount(),
     getShows(),
     getBreakingArticle()
   ]);
@@ -52,6 +57,8 @@ export default async function PublicLayout({
         breakingNews={breakingAlert}
         categories={categories}
         shows={shows}
+        hasPhotoStories={photoStoriesCount > 0}
+        hasReporters={reportersCount > 0}
       />
 
       {/* 2. Breaking News Strip */}

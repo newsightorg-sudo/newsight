@@ -13,10 +13,10 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'NEWSIGHT | Professional Digital News & Video Journalism',
+    default: 'NEWSIGHT | Professional Digital News & Visual Journalism',
     template: '%s | NEWSIGHT',
   },
-  description: 'Independent digital news and video journalism platform. Live broadcasts, in-depth ground reports, documentary investigations, and verified news coverage.',
+  description: 'Independent digital news and photojournalism publication. Live dispatches, in-depth ground reports, documentary investigations, and verified news coverage.',
   metadataBase: new URL('https://newsight.media'),
   icons: {
     icon: '/logo3.png',
@@ -51,32 +51,6 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} antialiased`}
     >
-      <head>
-        <link rel="icon" href="/logo3.png" type="image/png" />
-        <link rel="shortcut icon" href="/logo3.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo3.png" />
-        {/* Anti-FOUC Early Theme Initializer */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var stored = localStorage.getItem('newsight_theme');
-                  var theme = stored === 'dark' ? 'dark' : 'light';
-
-
-
-                  var root = document.documentElement;
-                  root.classList.remove('light', 'dark');
-                  root.classList.add(theme);
-                  root.setAttribute('data-theme', theme);
-                  root.style.colorScheme = theme;
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
       <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-[#E50914] selection:text-white flex flex-col">
         <Suspense fallback={null}>
           <NavigationProgressBar />

@@ -3,13 +3,12 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { 
-  getReporterBySlug, getArticlesByReporter, getVideos, getReporters 
+  getReporterBySlug, getArticlesByReporter, getReporters 
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 import PublicLayout from '@/components/public/PublicLayout';
-import VideoCard from '@/components/public/VideoCard';
 import { 
-  Mail, Clock, ArrowRight, ShieldCheck, Globe, PlaySquare, 
+  Mail, Clock, ArrowRight, ShieldCheck, Globe, 
   Newspaper, ChevronRight 
 } from 'lucide-react';
 
@@ -38,11 +37,7 @@ export default async function ReporterProfilePage({ params }: ReporterPageProps)
     notFound();
   }
 
-  const [articles, allVideos] = await Promise.all([
-    getArticlesByReporter(reporter.id, 20),
-    getVideos(12)
-  ]);
-  const reporterVideos = allVideos.filter((v: any) => v.reporter_id === reporter.id);
+  const articles = await getArticlesByReporter(reporter.id, 20);
 
   return (
     <PublicLayout>
@@ -101,25 +96,6 @@ export default async function ReporterProfilePage({ params }: ReporterPageProps)
           </div>
         </div>
 
-        {/* Published Video Reports */}
-        {reporterVideos.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[#252D39] pb-2">
-              <div className="flex items-center gap-2">
-                <PlaySquare className="w-4 h-4 text-[#E50914]" />
-                <h2 className="text-sm font-black uppercase tracking-wider text-white">
-                  Video Dispatches by {reporter.name} ({reporterVideos.length})
-                </h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {reporterVideos.map((video: any) => (
-                <VideoCard key={video.id} video={video} />
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Published Articles */}
         <div className="space-y-4 pt-2">
