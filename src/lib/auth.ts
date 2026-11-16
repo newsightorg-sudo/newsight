@@ -85,7 +85,7 @@ export function isAdmin(role?: UserRole): boolean {
 }
 
 export function canPublish(role?: UserRole): boolean {
-  return role === 'SUPER_ADMIN' || role === 'EDITOR';
+  return role === 'SUPER_ADMIN' || role === 'EDITOR' || role === 'REPORTER';
 }
 
 export function canEditAnyArticle(role?: UserRole): boolean {

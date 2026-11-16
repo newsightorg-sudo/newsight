@@ -52,7 +52,7 @@ export default function ArticleForm({
   const [success, setSuccess] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const canApproveAndPublish = userRole === 'SUPER_ADMIN' || userRole === 'EDITOR';
+  const canApproveAndPublish = userRole === 'SUPER_ADMIN' || userRole === 'EDITOR' || userRole === 'REPORTER';
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
