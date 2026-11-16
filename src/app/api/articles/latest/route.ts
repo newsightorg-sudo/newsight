@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { safeErrorResponse } from '@/lib/security';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,9 +51,6 @@ export async function GET() {
       }
     );
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Error fetching live articles.' },
-      { status: 500 }
-    );
+    return safeErrorResponse(error, 'Error fetching live articles.');
   }
 }

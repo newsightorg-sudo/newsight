@@ -1,20 +1,30 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, isEditorOrAdmin } from '@/lib/auth';
+import {
+  verifyCsrfOrigin,
+  getClientIp,
+  sanitizeString,
+  logSecurityAudit,
+  safeErrorResponse,
+} from '@/lib/security';
 
 interface Params {
   params: Promise<{ id: string }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(_req: Request, { params }: Params) {
   try {
-    const { id } = await params;
+    const { id: rawId } = await params;
+    const id = sanitizeString(rawId, 100);
     if (!id) {
       return new NextResponse('Asset ID required', { status: 400 });
     }
 
     const db = getDb();
-    const asset = await db.prepare('SELECT * FROM media_assets WHERE id = ?').get(id);
+    const asset = await db.prepare('SELECT * FROM media_assets WHERE id = ?').get<any>(id);
 
     if (!asset || !asset.url) {
       return new NextResponse('Media asset not found', { status: 404 });
@@ -37,13 +47,19 @@ export async function GET(_req: Request, { params }: Params) {
           'Content-Type': mime,
           'Content-Length': buffer.length.toString(),
           'Cache-Control': 'public, max-age=31536000, immutable',
+          'X-Content-Type-Options': 'nosniff',
         },
       });
     }
 
-    // If it's an external URL (http/https), redirect
+    // If it's an external URL (http/https), safely redirect
     if (asset.url.startsWith('http://') || asset.url.startsWith('https://')) {
-      return NextResponse.redirect(asset.url, { status: 302 });
+      try {
+        const parsed = new URL(asset.url);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+          return NextResponse.redirect(asset.url, { status: 302 });
+        }
+      } catch (_) {}
     }
 
     return new NextResponse('Unsupported media format', { status: 400 });
@@ -53,18 +69,42 @@ export async function GET(_req: Request, { params }: Params) {
 }
 
 export async function DELETE(req: Request, { params }: Params) {
+  const ip = getClientIp(req);
+
+  if (!verifyCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
   try {
     const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+    // RBAC: Only Editor or Super Admin can delete assets
+    if (!user || !isEditorOrAdmin(user.role)) {
+      logSecurityAudit('PERMISSION_DENIED', {
+        userId: user?.id,
+        role: user?.role,
+        ip,
+        status: 'BLOCKED',
+        notes: 'Unauthorized media asset deletion attempt',
+      });
+      return NextResponse.json({ error: 'Permission denied. Editor role required.' }, { status: 403 });
     }
 
-    const { id } = await params;
+    const { id: rawId } = await params;
+    const id = sanitizeString(rawId, 100);
     const db = getDb();
     await db.prepare('DELETE FROM media_assets WHERE id = ?').run(id);
 
+    logSecurityAudit('MEDIA_DELETED', {
+      userId: user.id,
+      role: user.role,
+      resourceId: id,
+      ip,
+      status: 'SUCCESS',
+      notes: `Deleted media asset ${id}`,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to delete asset.' }, { status: 500 });
+    return safeErrorResponse(error, 'Failed to delete asset.');
   }
 }

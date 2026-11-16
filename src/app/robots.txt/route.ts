@@ -4,12 +4,13 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://dailysignal.com/sitemap.xml
+Sitemap: https://newsight.media/sitemap.xml
 `;
 
   return new Response(robots, {
     headers: {
       'Content-Type': 'text/plain',
+      'Cache-Control': 'public, max-age=86400',
     },
   });
 }

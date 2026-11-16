@@ -40,16 +40,6 @@ export default function AdminLoginPage() {
     }
   }
 
-  function prefillCredentials(role: 'admin' | 'reporter') {
-    if (role === 'admin') {
-      setEmail('editor@dailysignal.com');
-      setPassword('Newsroom2026!');
-    } else {
-      setEmail('ayesha.sen@dailysignal.com');
-      setPassword('Reporter2026!');
-    }
-  }
-
   return (
     <div className="relative min-h-screen bg-white dark:bg-[#080B11] text-[#174A7E] dark:text-[#F5F7FA] flex flex-col justify-center items-center px-4 py-12 font-sans transition-colors">
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
@@ -120,29 +110,6 @@ export default function AdminLoginPage() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Demo Fast Fill */}
-        <div className="pt-4 border-t border-[#DCE7F2] dark:border-[#252D39] space-y-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#7890A8] block text-center font-mono">
-            Demo Credentials Quick-Fill
-          </span>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <button
-              type="button"
-              onClick={() => prefillCredentials('admin')}
-              className="py-2 px-2.5 bg-[#E3F0FC] hover:bg-[#079FE3] text-[#1261A6] hover:text-white dark:bg-[#1A2942] dark:text-[#079FE3] rounded-lg border border-[#DCE7F2] dark:border-[#27364B] transition text-center font-bold cursor-pointer"
-            >
-              Editor / Admin
-            </button>
-            <button
-              type="button"
-              onClick={() => prefillCredentials('reporter')}
-              className="py-2 px-2.5 bg-white hover:bg-[#E3F0FC] dark:bg-[#121925] dark:hover:bg-[#1A2942] text-[#496784] dark:text-[#B6C3D4] rounded-lg border border-[#DCE7F2] dark:border-[#27364B] transition text-center font-bold cursor-pointer"
-            >
-              Field Reporter
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Return to Public Site */}

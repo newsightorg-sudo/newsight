@@ -4,15 +4,46 @@ import { getDb } from '@/lib/db';
 import { getCurrentUser, isAdmin } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
 import { getReporters, invalidateDataCache } from '@/lib/data';
+import { 
+  verifyCsrfOrigin, 
+  enforceRateLimit, 
+  RateLimits, 
+  sanitizeString, 
+  isValidEmail, 
+  safeErrorResponse, 
+  logSecurityAudit 
+} from '@/lib/security';
 
 export async function GET(req: Request) {
-  const user = await getCurrentUser();
-  const includeInactive = isAdmin(user?.role);
-  const reporters = await getReporters(includeInactive);
-  return NextResponse.json({ reporters });
+  try {
+    const user = await getCurrentUser();
+    const isUserAdmin = isAdmin(user?.role);
+    const reporters = await getReporters(isUserAdmin);
+
+    // If caller is not admin, scrub internal user data to prevent information disclosure
+    const sanitizedReporters = isUserAdmin 
+      ? reporters 
+      : reporters.map(r => {
+          const { user_id, user_email, user_role, has_credentials, ...safeReporter } = r as any;
+          return safeReporter;
+        });
+
+    return NextResponse.json({ reporters: sanitizedReporters });
+  } catch (error: any) {
+    return safeErrorResponse(error, 'Failed to fetch reporters.');
+  }
 }
 
 export async function POST(req: Request) {
+  // CSRF Origin verification
+  if (!verifyCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
+  // Rate limit
+  const rateLimitResponse = enforceRateLimit(req, RateLimits.MUTATIONS, 'reporter_mutations');
+  if (rateLimitResponse) return rateLimitResponse;
+
   try {
     const user = await getCurrentUser();
     // Only Admin (SUPER_ADMIN) can create reporters and credentials
@@ -23,19 +54,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const {
-      name,
-      title,
-      beat,
-      bio = '',
-      avatar_url,
-      email,
-      twitter,
-      linkedin,
-      password,
-      create_credentials = false,
-      user_role = 'REPORTER'
-    } = await req.json();
+    const body = await req.json();
+    const name = sanitizeString(body.name || '');
+    const title = sanitizeString(body.title || '');
+    const beat = sanitizeString(body.beat || '');
+    const bio = sanitizeString(body.bio || '');
+    const avatar_url = body.avatar_url ? String(body.avatar_url).trim().slice(0, 1000) : null;
+    const email = body.email ? String(body.email).trim().toLowerCase() : '';
+    const twitter = body.twitter ? sanitizeString(String(body.twitter)).slice(0, 100) : null;
+    const linkedin = body.linkedin ? sanitizeString(String(body.linkedin)).slice(0, 100) : null;
+    const password = body.password ? String(body.password).trim() : '';
+    const create_credentials = Boolean(body.create_credentials);
+    const user_role = body.user_role === 'EDITOR' || body.user_role === 'SUPER_ADMIN' ? body.user_role : 'REPORTER';
 
     if (!name || !title || !beat) {
       return NextResponse.json(
@@ -47,18 +77,24 @@ export async function POST(req: Request) {
     const db = getDb();
     const reporterSlug = slugify(name);
     const now = new Date().toISOString();
-    const reporterEmail = email?.trim() || `${reporterSlug}@newsight.media`;
+    const reporterEmail = email || `${reporterSlug}@newsight.media`;
+
+    if (email && !isValidEmail(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email address provided.' },
+        { status: 400 }
+      );
+    }
 
     let userId: string | null = null;
 
     // Admin creates login credentials for this reporter
-    const shouldCreateCredentials = Boolean(create_credentials || (password && password.trim().length > 0));
+    const shouldCreateCredentials = Boolean(create_credentials || password.length > 0);
 
     if (shouldCreateCredentials) {
-      const plainPassword = password?.trim();
-      if (!plainPassword || plainPassword.length < 6) {
+      if (!password || password.length < 8) {
         return NextResponse.json(
-          { error: 'A password with at least 6 characters is required to create credentials.' },
+          { error: 'A password with at least 8 characters is required for staff credentials.' },
           { status: 400 }
         );
       }
@@ -72,7 +108,7 @@ export async function POST(req: Request) {
         );
       }
 
-      const passwordHash = await bcrypt.hash(plainPassword, 10);
+      const passwordHash = await bcrypt.hash(password, 12);
       userId = `usr-${Date.now()}`;
 
       await db.prepare(`
@@ -80,10 +116,10 @@ export async function POST(req: Request) {
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `).run(
         userId,
-        name.trim(),
+        name,
         reporterEmail,
         passwordHash,
-        user_role || 'REPORTER',
+        user_role,
         avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
         now
       );
@@ -100,19 +136,27 @@ export async function POST(req: Request) {
     `).run(
       reporterId,
       userId,
-      name.trim(),
+      name,
       reporterSlug,
-      title.trim(),
-      beat.trim(),
-      bio?.trim() || '',
-      avatar_url?.trim() || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+      title,
+      beat,
+      bio,
+      avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
       reporterEmail,
-      twitter?.trim() || null,
-      linkedin?.trim() || null,
+      twitter,
+      linkedin,
       now
     );
 
     invalidateDataCache('reporter');
+
+    logSecurityAudit('REPORTER_CREATED', {
+      adminId: user.id,
+      reporterId,
+      reporterSlug,
+      hasCredentials: Boolean(userId),
+      userRole: shouldCreateCredentials ? user_role : undefined
+    });
 
     return NextResponse.json({
       success: true,
@@ -126,10 +170,10 @@ export async function POST(req: Request) {
         slug: reporterSlug,
         email: reporterEmail,
         has_credentials: Boolean(userId),
-        user_role: shouldCreateCredentials ? (user_role || 'REPORTER') : undefined
+        user_role: shouldCreateCredentials ? user_role : undefined
       }
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Error creating reporter.' }, { status: 500 });
+    return safeErrorResponse(error, 'Error creating reporter.');
   }
 }

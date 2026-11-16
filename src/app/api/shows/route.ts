@@ -1,30 +1,59 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, isEditorOrAdmin } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
 import { getShows, invalidateDataCache } from '@/lib/data';
+import {
+  verifyCsrfOrigin,
+  getClientIp,
+  sanitizeString,
+  sanitizeInteger,
+  logSecurityAudit,
+  safeErrorResponse,
+} from '@/lib/security';
 
 export async function GET() {
-  const shows = await getShows();
-  return NextResponse.json({ shows });
+  try {
+    const shows = await getShows();
+    return NextResponse.json({ shows });
+  } catch (error: any) {
+    return safeErrorResponse(error, 'Error fetching shows.');
+  }
 }
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+
+  if (!verifyCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
   try {
     const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+    // RBAC: Only Editor or Super Admin can create shows
+    if (!user || !isEditorOrAdmin(user.role)) {
+      logSecurityAudit('PERMISSION_DENIED', {
+        userId: user?.id,
+        role: user?.role,
+        ip,
+        status: 'BLOCKED',
+        notes: 'Unauthorized show creation attempt',
+      });
+      return NextResponse.json({ error: 'Permission denied. Editor role required.' }, { status: 403 });
     }
 
-    const {
-      title,
-      description,
-      cover_image,
-      banner_image,
-      host_name,
-      schedule_info,
-      order_index = 0
-    } = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'Invalid payload.' }, { status: 400 });
+    }
+
+    const title = sanitizeString(body.title, 200);
+    const description = sanitizeString(body.description, 1000);
+    const cover_image = sanitizeString(body.cover_image, 1000);
+    const banner_image = sanitizeString(body.banner_image, 1000);
+    const host_name = sanitizeString(body.host_name, 100);
+    const schedule_info = sanitizeString(body.schedule_info, 150);
+    const order_index = sanitizeInteger(body.order_index, 0, 1000, 0);
 
     if (!title || !description) {
       return NextResponse.json({ error: 'Title and description are required.' }, { status: 400 });
@@ -43,30 +72,46 @@ export async function POST(req: Request) {
       title,
       slug,
       description,
-      cover_image || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80',
+      cover_image || '',
       banner_image || null,
       host_name || null,
       schedule_info || null,
-      Number(order_index || 0),
+      order_index,
       now
     );
 
     invalidateDataCache('show');
+
+    logSecurityAudit('SETTINGS_UPDATED', {
+      userId: user.id,
+      role: user.role,
+      resourceId: id,
+      ip,
+      status: 'SUCCESS',
+      notes: `Created show "${title}"`,
+    });
+
     return NextResponse.json({ success: true, show: { id, title, slug } });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Error creating show.' }, { status: 500 });
+    return safeErrorResponse(error, 'Error creating show.');
   }
 }
 
 export async function DELETE(req: Request) {
+  const ip = getClientIp(req);
+
+  if (!verifyCsrfOrigin(req)) {
+    return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  }
+
   try {
     const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+    if (!user || !isEditorOrAdmin(user.role)) {
+      return NextResponse.json({ error: 'Permission denied. Editor role required.' }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    const id = sanitizeString(searchParams.get('id'), 100);
 
     if (!id) {
       return NextResponse.json({ error: 'Show ID is required.' }, { status: 400 });
@@ -76,8 +121,18 @@ export async function DELETE(req: Request) {
     await db.prepare('DELETE FROM shows WHERE id = ?').run(id);
 
     invalidateDataCache('show');
+
+    logSecurityAudit('SETTINGS_UPDATED', {
+      userId: user.id,
+      role: user.role,
+      resourceId: id,
+      ip,
+      status: 'SUCCESS',
+      notes: `Deleted show ${id}`,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Error deleting show.' }, { status: 500 });
+    return safeErrorResponse(error, 'Error deleting show.');
   }
 }

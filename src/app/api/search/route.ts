@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchArticles, searchVideos } from '@/lib/data';
+import { enforceRateLimit, RateLimits, sanitizeString, safeErrorResponse } from '@/lib/security';
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const q = searchParams.get('q') || '';
+  // Rate limit search requests to prevent DoS
+  const rateLimitResponse = enforceRateLimit(request, RateLimits.SEARCH, 'search');
+  if (rateLimitResponse) return rateLimitResponse;
 
-  if (!q.trim() || q.trim().length < 2) {
+  const { searchParams } = new URL(request.url);
+  const rawQ = searchParams.get('q') || '';
+  const q = sanitizeString(rawQ).slice(0, 100).trim();
+
+  if (!q || q.length < 2) {
     return NextResponse.json({ videos: [], articles: [] });
   }
 
@@ -32,7 +38,6 @@ export async function GET(request: NextRequest) {
       }))
     });
   } catch (error) {
-    console.error('API search error:', error);
-    return NextResponse.json({ error: 'Search failed' }, { status: 500 });
+    return safeErrorResponse(error, 'Search failed.');
   }
 }

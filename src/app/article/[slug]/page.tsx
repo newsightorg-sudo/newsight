@@ -8,6 +8,7 @@ import {
 } from '@/lib/data';
 import { getCurrentUser } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
+import { sanitizeHtml } from '@/lib/security';
 import PublicLayout from '@/components/public/PublicLayout';
 import ReadingProgressBar from '@/components/public/ReadingProgressBar';
 import SocialShareBar from '@/components/public/SocialShareBar';
@@ -84,7 +85,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <PublicLayout user={user} settings={settings}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
       <ReadingProgressBar />
 
@@ -197,7 +198,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* Article Body Content */}
         <div 
           className="article-prose pt-4"
-          dangerouslySetInnerHTML={{ __html: article.body }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.body) }}
         />
 
         {/* Source attribution */}
