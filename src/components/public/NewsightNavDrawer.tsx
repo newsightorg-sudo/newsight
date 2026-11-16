@@ -87,8 +87,6 @@ export default function NewsightNavDrawer({
   const primaryNav = [
     { label: 'Home Page', href: '/', icon: Home },
     { label: 'Photo Stories', href: '/photos', icon: Camera },
-    { label: 'Reporters Roster', href: '/reporters', icon: User },
-    { label: 'Opinion & Analysis', href: '/opinion', icon: FileText },
     { label: 'All Categories', href: '/categories', icon: LayoutGrid },
   ];
 
@@ -190,8 +188,8 @@ export default function NewsightNavDrawer({
             </div>
           </div>
 
-          {/* 2. News Desks & Categories (only show categories that have published articles) */}
-          {categories.filter(c => Number((c as any).article_count || 0) > 0).length > 0 && (
+          {/* 2. News Desks & Categories (only show categories that have published articles, excluding opinion) */}
+          {categories.filter(c => Number((c as any).article_count || 0) > 0 && c.slug !== 'opinion').length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#71869C] dark:text-[#707B8B]">
@@ -207,7 +205,7 @@ export default function NewsightNavDrawer({
                 </Link>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {categories.filter(c => Number((c as any).article_count || 0) > 0).slice(0, 12).map((cat) => (
+                {categories.filter(c => Number((c as any).article_count || 0) > 0 && c.slug !== 'opinion').slice(0, 12).map((cat) => (
                   <Link
                     key={cat.slug}
                     href={`/category/${cat.slug}`}

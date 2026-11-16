@@ -149,7 +149,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat-sports', name: 'Sports', slug: 'sports', description: 'Tournaments, athletics, and sports reporting.', color: '#EF4444', order_index: 11, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
   { id: 'cat-science', name: 'Science', slug: 'science', description: 'Space exploration, astrophysics, and climate telemetry.', color: '#06B6D4', order_index: 12, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
   { id: 'cat-environment', name: 'Environment', slug: 'environment', description: 'Ecological investigations and climate policy.', color: '#22C55E', order_index: 13, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
-  { id: 'cat-opinion', name: 'Opinion', slug: 'opinion', description: 'Editorial commentary and expert perspectives.', color: '#A855F7', order_index: 14, show_in_nav: 1, created_at: '2026-01-01T00:00:00Z' },
+  { id: 'cat-opinion', name: 'Opinion', slug: 'opinion', description: 'Editorial commentary and expert perspectives.', color: '#A855F7', order_index: 14, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
   { id: 'cat-entertainment', name: 'Entertainment', slug: 'entertainment', description: 'Cinema, arts, and cultural commentary.', color: '#F43F5E', order_index: 15, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
   { id: 'cat-lifestyle', name: 'Lifestyle', slug: 'lifestyle', description: 'Culture, society, and modern life.', color: '#84CC16', order_index: 16, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },
   { id: 'cat-travel', name: 'Travel', slug: 'travel', description: 'Expeditions and field reporting.', color: '#0EA5E9', order_index: 17, show_in_nav: 0, created_at: '2026-01-01T00:00:00Z' },

@@ -8,7 +8,7 @@ import PublicLayout from '@/components/public/PublicLayout';
 import VisualDispatchHero from '@/components/public/VisualDispatchHero';
 import LiveHeroSection from '@/components/public/LiveHeroSection';
 import { 
-  getLatestArticles, getArticlesByCategory, getOpinionArticles, 
+  getLatestArticles, getArticlesByCategory, 
   getInvestigativeArticles, getFieldReportArticles, getRecentDispatchArticles 
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
@@ -23,8 +23,7 @@ export default async function HomePage() {
     recentDispatchArticles,
     latestArticles,
     politicsArticles,
-    techArticles,
-    opinionArticles
+    techArticles
   ] = await Promise.all([
     getArticlesByCategory('top-stories', 4),
     getInvestigativeArticles(4),
@@ -32,8 +31,7 @@ export default async function HomePage() {
     getRecentDispatchArticles(4),
     getLatestArticles(24),
     getArticlesByCategory('politics', 3),
-    getArticlesByCategory('technology', 3),
-    getOpinionArticles(3)
+    getArticlesByCategory('technology', 3)
   ]);
 
   // Dynamic content derived entirely from database
@@ -360,7 +358,7 @@ export default async function HomePage() {
                         Latest News & Deep Journalism
                       </h2>
                       <p className="text-xs text-[#707B8B]">
-                        Field dispatches, parliamentary coverage, financial investigations, and opinion columns
+                        Field dispatches, parliamentary coverage, and financial investigations
                       </p>
                     </div>
                   </div>
@@ -376,7 +374,7 @@ export default async function HomePage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   
                   {/* Left Main Article Stream */}
-                  <div className={`${politicsArticles.length > 0 || techArticles.length > 0 || opinionArticles.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-4`}>
+                  <div className={`${politicsArticles.length > 0 || techArticles.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-4`}>
                     {latestArticles.slice(0, 6).map((art) => (
                       <Link
                         key={art.id}
@@ -429,7 +427,7 @@ export default async function HomePage() {
                   </div>
 
                   {/* Right Beats & Desks Rail (Only if beats have articles) */}
-                  {(politicsArticles.length > 0 || techArticles.length > 0 || opinionArticles.length > 0) && (
+                  {(politicsArticles.length > 0 || techArticles.length > 0) && (
                     <div className="lg:col-span-5 space-y-6">
                       
                       {/* Politics Desk Box */}
@@ -491,37 +489,6 @@ export default async function HomePage() {
                           </div>
                         </div>
                       )}
-
-                      {/* Opinion & Editorial Columns */}
-                      {opinionArticles.length > 0 && (
-                        <div className="p-4 rounded-xl bg-[#0E131C] border border-[#252D39]">
-                          <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#252D39]">
-                            <span className="text-xs font-black uppercase tracking-wider text-amber-400">
-                              Editorial Opinion & Essays
-                            </span>
-                            <Link href="/opinion" className="text-[11px] font-semibold text-[#075DEB] hover:underline">
-                              More
-                            </Link>
-                          </div>
-                          <div className="divide-y divide-[#252D39]/50">
-                            {opinionArticles.map((art) => (
-                              <Link
-                                key={art.id}
-                                href={`/article/${art.slug}`}
-                                className="block py-2.5 group"
-                              >
-                                <span className="text-[10px] text-amber-400/90 font-bold block mb-0.5">
-                                  {art.reporter_name}
-                                </span>
-                                <h4 className="text-xs font-semibold text-[#F5F7FA] group-hover:text-[#075DEB] transition-colors line-clamp-2 leading-snug">
-                                  {art.title}
-                                </h4>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
                     </div>
                   )}
 

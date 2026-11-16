@@ -105,11 +105,6 @@ export default function NewsightFooter({ settings }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/opinion" className="hover:text-white transition-colors">
-                  Editorials & Opinions
-                </Link>
-              </li>
-              <li>
                 <Link href="/photos" className="hover:text-white transition-colors">
                   Photo Stories & Dispatches
                 </Link>
@@ -168,11 +163,6 @@ export default function NewsightFooter({ settings }: FooterProps) {
                   Science & Space
                 </Link>
               </li>
-              <li>
-                <Link href="/category/opinion" className="hover:text-white transition-colors">
-                  Opinion & Essays
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -205,11 +195,6 @@ export default function NewsightFooter({ settings }: FooterProps) {
               <li>
                 <Link href="/conflict-of-interest" className="hover:text-white transition-colors">
                   Conflict of Interest
-                </Link>
-              </li>
-              <li>
-                <Link href="/reporters" className="hover:text-white transition-colors">
-                  Newsroom Directory
                 </Link>
               </li>
               <li>

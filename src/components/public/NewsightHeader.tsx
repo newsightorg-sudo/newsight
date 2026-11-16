@@ -214,8 +214,9 @@ export default function NewsightHeader({
     window.location.href = '/';
   };
 
-  // Curate Primary Desk Navigation Links (strictly only categories that have published articles)
+  // Curate Primary Desk Navigation Links (strictly only categories that have published articles, excluding opinion)
   const curatedDesks = categories.filter((c: any) => {
+    if (c.slug === 'opinion') return false;
     const count = Number(c.article_count);
     return !isNaN(count) && count > 0;
   });
@@ -687,22 +688,6 @@ export default function NewsightHeader({
               }`}
             >
               Photo Stories
-            </Link>
-          )}
-
-          {hasReporters && (
-            <Link
-              href="/reporters"
-              prefetch={true}
-              className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors ${
-                pathname.startsWith('/reporters')
-                  ? 'bg-[#079FE3] text-white font-bold'
-                  : isDark
-                  ? 'text-[#A4ADBB] hover:text-white hover:bg-[#121925]'
-                  : 'text-[#294767] hover:text-[#079FE3] hover:bg-[#E5F2FC]'
-              }`}
-            >
-              Reporters
             </Link>
           )}
         </div>
