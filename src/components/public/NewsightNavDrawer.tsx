@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
-  X, Search, Home, PlaySquare, LayoutGrid, Film, Award, TrendingUp,
+  X, Search, Home, LayoutGrid, Award, TrendingUp,
   FileText, ShieldCheck, Mail, ExternalLink, ChevronRight, User,
-  Radio, Camera, Newspaper, Sparkles
+  Camera, Newspaper, Sparkles
 } from 'lucide-react';
 import NewsightLogo from './NewsightLogo';
 import ThemeToggle from './ThemeToggle';
@@ -84,7 +84,6 @@ export default function NewsightNavDrawer({
 
   const primaryNav = [
     { label: 'Home Page', href: '/', icon: Home },
-    { label: 'Live Coverage', href: '/live', icon: Radio, badge: 'Live', badgeColor: 'bg-[#D71920]' },
     { label: 'Photo Stories', href: '/photos', icon: Camera },
     { label: 'Reporters Roster', href: '/reporters', icon: User },
     { label: 'Opinion & Analysis', href: '/opinion', icon: FileText },
@@ -183,12 +182,6 @@ export default function NewsightNavDrawer({
                       <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#079FE3]'}`} />
                       <span className="font-semibold truncate">{item.label}</span>
                     </div>
-                    {item.badge && (
-                      <span className={`px-1.5 py-0.5 text-[9px] font-extrabold uppercase rounded text-white shrink-0 ${item.badgeColor || 'bg-[#1261A6]'
-                        }`}>
-                        {item.badge}
-                      </span>
-                    )}
                   </Link>
                 );
               })}

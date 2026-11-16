@@ -54,9 +54,6 @@ export default function MobileBottomNav() {
 
             <div className="relative">
               <Icon className={`w-5 h-5 mb-0.5 transition-colors ${active ? 'text-[#079FE3]' : ''}`} />
-              {item.pulse && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#D71920] animate-pulse" />
-              )}
             </div>
             <span className={`tracking-tight ${
               active 

@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { 
   Menu, Search, Bell, User as UserIcon, LogOut, 
   ExternalLink, X, PlaySquare, Newspaper, ArrowRight, 
-  Loader2, Sparkles, ChevronRight, Radio, Flame, ShieldCheck
+  Loader2, Sparkles, ChevronRight, Flame, ShieldCheck
 } from 'lucide-react';
 import NewsightLogo from './NewsightLogo';
 import NewsightNavDrawer from './NewsightNavDrawer';
@@ -469,16 +469,6 @@ export default function NewsightHeader({
               <Search className="w-5 h-5" />
             </button>
 
-            {/* Quick Live Link */}
-            <Link
-              href="/live"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-500/10 text-[#D71920] border border-red-500/20 hover:bg-red-500/20 transition animate-pulse"
-              title="Watch Live Coverage & Blogs"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#D71920]" />
-              <span>Live Desk</span>
-            </Link>
-
             {/* Theme Toggle Button */}
             <ThemeToggle className={
               isDark
@@ -713,16 +703,6 @@ export default function NewsightHeader({
               Reporters
             </Link>
           )}
-
-          <div className="ml-auto pl-2 shrink-0">
-            <Link
-              href="/live"
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-600 text-white hover:bg-red-700 transition"
-            >
-              <Radio className="w-3 h-3 animate-pulse" />
-              <span>24x7 Broadcast</span>
-            </Link>
-          </div>
         </div>
       </header>
     </>
