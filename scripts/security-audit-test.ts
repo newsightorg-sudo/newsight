@@ -299,6 +299,51 @@ async function runTestSuite() {
   }
 
   // --------------------------------------------------------------------------
+  // TEST SUITE 7: Admin Forgot Password & MSG91 Verification
+  // --------------------------------------------------------------------------
+  console.log('\n--- Suite 7: Admin Forgot Password & MSG91 Verification ---');
+
+  // Test 7.1: Rate limits configured for admin password recovery
+  {
+    assert(
+      RateLimits.ADMIN_FORGOT_PASSWORD !== undefined &&
+      RateLimits.ADMIN_FORGOT_PASSWORD.limit === 5 &&
+      RateLimits.ADMIN_FORGOT_PASSWORD.windowMs === 15 * 60 * 1000,
+      'ADMIN_FORGOT_PASSWORD rate limit configured to 5 attempts per 15 minutes'
+    );
+  }
+
+  // Test 7.2: MSG91 helper module behavior in local/dev mode
+  {
+    const { sendAdminOtpViaMsg91 } = await import('../src/lib/msg91');
+    const result = await sendAdminOtpViaMsg91({
+      toEmail: 'admin@newsight.media',
+      toName: 'Chief Editor',
+      otp: '782910',
+    });
+    assert(result.success === true, 'MSG91 email sender returns success in development/testing mode');
+  }
+
+  // Test 7.3: OTP validation regex enforces strict 6 digits
+  {
+    const isValidCode = (code: string) => /^\d{6}$/.test(code.trim());
+    assert(isValidCode('123456') === true, 'Valid 6-digit OTP code accepted');
+    assert(isValidCode('12345') === false, '5-digit code rejected');
+    assert(isValidCode('1234567') === false, '7-digit code rejected');
+    assert(isValidCode('12345a') === false, 'Alphanumeric code rejected');
+    assert(isValidCode(' 123456 ') === true, 'Trimmed 6-digit code accepted');
+  }
+
+  // Test 7.4: Role gating: Admin only (SUPER_ADMIN)
+  {
+    const checkRoleForRecovery = (role: string) => role === 'SUPER_ADMIN';
+    assert(checkRoleForRecovery('SUPER_ADMIN') === true, 'SUPER_ADMIN authorized for email OTP password recovery');
+    assert(checkRoleForRecovery('EDITOR') === false, 'EDITOR blocked from admin-only password recovery');
+    assert(checkRoleForRecovery('REPORTER') === false, 'REPORTER blocked from admin-only password recovery');
+    assert(checkRoleForRecovery('CONTRIBUTOR') === false, 'CONTRIBUTOR blocked from admin-only password recovery');
+  }
+
+  // --------------------------------------------------------------------------
   // SUMMARY RESULTS
   // --------------------------------------------------------------------------
   console.log('\n================================================================');

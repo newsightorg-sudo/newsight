@@ -85,9 +85,17 @@ export default function AdminLoginPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#174A7E] dark:text-[#F5F7FA] mb-1.5 uppercase tracking-wider font-mono text-[10.5px]">
-              Security Key / Password
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-bold text-[#174A7E] dark:text-[#F5F7FA] uppercase tracking-wider font-mono text-[10.5px]">
+                Security Key / Password
+              </label>
+              <Link
+                href="/admin/forgot-password"
+                className="text-[11px] text-[#079FE3] hover:text-[#1261A6] dark:text-[#38BDF8] dark:hover:text-[#7DD3FC] font-semibold transition"
+              >
+                Forgot Password?
+              </Link>
+            </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-[#7890A8] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input

@@ -108,6 +108,8 @@ export const RateLimits = {
   SEARCH: { limit: 60, windowMs: 60 * 1000 },
   // File uploads: 20 per 5 minutes per authenticated user
   MEDIA_UPLOAD: { limit: 20, windowMs: 5 * 60 * 1000 },
+  // Admin password reset / OTP: 5 requests per 15 minutes
+  ADMIN_FORGOT_PASSWORD: { limit: 5, windowMs: 15 * 60 * 1000 },
   // General mutating API: 120 per minute
   MUTATIONS: { limit: 120, windowMs: 60 * 1000 },
 };
@@ -351,7 +353,10 @@ export type SecurityAuditAction =
   | 'SETTINGS_UPDATED'
   | 'CSRF_BLOCKED'
   | 'MEDIA_UPLOADED'
-  | 'MEDIA_DELETED';
+  | 'MEDIA_DELETED'
+  | 'ADMIN_PASSWORD_RESET_OTP_SENT'
+  | 'ADMIN_PASSWORD_RESET_SUCCESS'
+  | 'ADMIN_PASSWORD_RESET_FAILED';
 
 export function logSecurityAudit(
   action: SecurityAuditAction,
